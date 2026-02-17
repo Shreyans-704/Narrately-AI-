@@ -1,5 +1,7 @@
 # Narrately-AI-
-Narrately - AI Video Creation Studio A powerful, user-friendly platform built with cutting-edge AI technology to revolutionize how you create professional videos.
+
+<p> Narrately - AI Video Creation Studio A powerful, user-friendly platform built with cutting-edge AI technology to revolutionize how you create professional videos.</p>
+
 <img width="1830" height="860" alt="image" src="https://github.com/user-attachments/assets/0bab45c5-2488-4956-aac4-15fc928aa40d" />
 
 <img width="1879" height="866" alt="image" src="https://github.com/user-attachments/assets/3460373b-174f-46ba-a22f-5ee995d15680" />
