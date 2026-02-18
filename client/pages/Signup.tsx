@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { signInWithGoogle, signUp } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
 
@@ -43,7 +43,7 @@ export default function Signup() {
 
       // TODO: Implement Supabase registration
       // On successful registration, user will be created with:
-      // - credit_balance: 100
+      // - credit_balance: 30
       // - trial_ends_at: 3 months from today
       const { user: createdUser, error: signupError } = await signUp(email, password, fullName);
 
@@ -53,9 +53,9 @@ export default function Signup() {
       }
 
       if (createdUser) {
-        // store user in auth store and navigate to dashboard
+        // store user in auth store and navigate to onboarding
         setUser(createdUser as any);
-        navigate('/dashboard');
+        navigate('/onboarding');
       }
     } finally {
       setIsLoading(false);
@@ -68,13 +68,13 @@ export default function Signup() {
 
     try {
       console.log('Initiating Google sign-up...');
-      const { data, error } = await signInWithGoogle();
+      const { data, error } = await signInWithGoogle('/onboarding');
       
       if (error) {
         console.error('Google signup error:', error);
         setError(error);
       } else if (data) {
-        // Google OAuth will redirect to dashboard after successful signup
+        // Google OAuth will redirect to onboarding after successful signup
         console.log('Google sign-up initiated, redirecting...');
       }
     } catch (err) {
@@ -108,7 +108,7 @@ export default function Signup() {
       <div className="pt-20 md:pt-0 min-h-screen flex items-center justify-center px-4 relative z-10">
         <div className="w-full max-w-md">
           {/* Back Button */}
-          <Link to="/" className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground mb-8 transition-colors">
+          <Link to="/" className="inline-flex items-center gap-2 text-foreground/85 hover:text-foreground mb-8 transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Back to home
           </Link>
@@ -117,35 +117,7 @@ export default function Signup() {
           <div className="rounded-xl border border-border bg-card p-8">
             <div className="mb-8">
               <h1 className="text-2xl font-bold text-foreground mb-2">Create your account</h1>
-              <p className="text-foreground/60">Join thousands of creators using Narrately</p>
-            </div>
-
-            {/* Promo Banner */}
-            <div className="mb-6 p-5 rounded-xl bg-gradient-to-r from-primary/15 via-primary/10 to-accent/10 border border-primary/30 backdrop-blur-sm">
-              <div className="flex items-start gap-3">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20 flex-shrink-0">
-                  <CheckCircle2 className="w-6 h-6 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold text-primary text-sm mb-1">
-                    Limited Time Offer: 100 Free Credits
-                  </p>
-                  <p className="text-primary/80 text-xs leading-relaxed">
-                    Get 100 credits free + 3 months of unlimited access when you sign up today.
-                    No credit card required. Perfect for creators just getting started.
-                  </p>
-                  <div className="mt-2 flex gap-3 text-xs">
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10">
-                      <span>⚡</span>
-                      <span className="font-semibold text-primary">100 Credits</span>
-                    </span>
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-accent/10">
-                      <span>⏱️</span>
-                      <span className="font-semibold text-accent">3 Months Free</span>
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <p className="text-foreground/85">Join thousands of creators using Narrately</p>
             </div>
 
             {error && (
@@ -225,7 +197,7 @@ export default function Signup() {
                 <div className="w-full border-t border-border"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-card text-foreground/60">Or sign up with</span>
+                <span className="px-2 bg-card text-foreground/85">Or sign up with</span>
               </div>
             </div>
 
@@ -258,7 +230,7 @@ export default function Signup() {
             </Button>
 
             {/* Terms */}
-            <p className="mt-6 text-xs text-foreground/60 text-center">
+            <p className="mt-6 text-xs text-foreground/85 text-center">
               By signing up, you agree to our{' '}
               <a href="#" className="text-primary hover:text-primary/80 transition-colors">
                 Terms of Service
@@ -269,7 +241,7 @@ export default function Signup() {
               </a>
             </p>
 
-            <p className="mt-4 text-center text-sm text-foreground/60">
+            <p className="mt-4 text-center text-sm text-foreground/85">
               Already have an account?{' '}
               <Link to="/login" className="text-primary hover:text-primary/80 font-medium transition-colors">
                 Sign in

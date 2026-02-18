@@ -12,8 +12,9 @@ import Pricing from "./pages/Pricing";
 import About from "./pages/About";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
-import AdminPortal from "./pages/AdminPortal";
+import Onboarding from './pages/Onboarding';
+import StudioDashboard from './pages/StudioDashboard';
+import AdminPortal from './pages/AdminPortal';
 import NotFound from "./pages/NotFound";
 import { AIAgentHelper } from "./components/AIAgentHelper";
 import { ProtectedAdminRoute } from "./components/ProtectedAdminRoute";
@@ -33,7 +34,8 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/studio" element={<StudioDashboard />} />
           <Route path="/admin-portal" element={<ProtectedAdminRoute element={<AdminPortal />} />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

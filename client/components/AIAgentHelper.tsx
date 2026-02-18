@@ -69,8 +69,8 @@ export function AIAgentHelper() {
       {open && (
         <div className="w-72 overflow-hidden rounded-2xl border border-border bg-card/95 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur">
           <div className="px-5 py-4">
-            <p className="text-xs uppercase tracking-[0.25em] text-foreground/50">
-              AI Helper
+            <p className="text-xs uppercase tracking-[0.25em] text-foreground/80">
+              Helper Bot
             </p>
             <p className="text-sm font-semibold text-foreground">
               How can we help?
@@ -116,7 +116,7 @@ function MenuItem({ label, to, href, subtle, onSelect }: MenuItemProps) {
   const baseClasses =
     'flex w-full items-center justify-between rounded-xl px-3 py-2 text-sm transition-colors';
   const styleClasses = subtle
-    ? 'text-foreground/60 hover:text-foreground hover:bg-card/70'
+    ? 'text-foreground/85 hover:text-foreground hover:bg-card/70'
     : 'text-foreground hover:bg-card/70';
 
   if (to) {

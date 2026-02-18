@@ -33,7 +33,7 @@ export default function Features() {
     }, 100);
 
     return () => clearInterval(typingInterval);
-  }, []);
+  }, [fullPrompt]);
 
   // Language cycling effect
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function Features() {
     }, 2000);
 
     return () => clearInterval(languageInterval);
-  }, []);
+  }, [languages.length]);
 
   const smallFeatures = [
     {
@@ -84,24 +84,11 @@ export default function Features() {
   ];
 
   return (
-    <div className="min-h-screen bg-background dark relative">
-      {/* Site-wide N background */}
-      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-        <img src="/ai-bg.svg" alt="" className="w-full h-full object-cover opacity-50" />
-        <div className="floating-logos" aria-hidden>
-          <img src="/narrately-logo.svg" className="floating-logo floating-logo--large" alt="" />
-          <img src="/narrately-logo.svg" className="floating-logo floating-logo--med" alt="" />
-          <img src="/narrately-logo.svg" className="floating-logo floating-logo--small" alt="" />
-          <img src="/narrately-logo.svg" className="floating-logo floating-logo--med" alt="" />
-          <img src="/narrately-logo.svg" className="floating-logo floating-logo--small" alt="" />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/60" />
-      </div>
+    <div className="min-h-screen bg-background dark">
       <Header />
 
       {/* Hero Section */}
       <section className="pt-32 pb-20 min-h-[60vh] flex items-center relative overflow-hidden">
-        {/* Background gradient effects */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
@@ -167,7 +154,6 @@ export default function Features() {
               className="lg:col-span-2 rounded-[2rem] bg-gradient-to-br from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20 border border-border overflow-hidden relative min-h-[500px]"
             >
               <div className="p-8 lg:p-12 h-full flex flex-col lg:flex-row gap-8 items-center">
-                {/* Text Content */}
                 <div className="flex-1 space-y-4">
                   <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 dark:bg-white/10 backdrop-blur-lg border border-white/20">
                     <Video className="w-4 h-4 text-pink-600 dark:text-pink-400" />
@@ -177,38 +163,25 @@ export default function Features() {
                     Turn text into video with AI
                   </h3>
                   <p className="text-foreground/90 text-lg">
-                    Produce complete videos with just a script and <span className="font-semibold text-pink-600 dark:text-pink-400">text to video AI</span>. Our AI video generator automates and edits the entire process and saves hours of production time. Generate a high-quality video (1080p or 4K) with a voiceover, visuals, and AI avatar.
+                    Produce complete videos with just a script and <span className="font-semibold text-pink-600 dark:text-pink-400">text to video AI</span>. Our AI video generator automates and edits the entire process and saves hours of production time.
                   </p>
-                  <Button onClick={() => navigate('/signup')} className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white">
+                  <Button className="bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-700 hover:to-purple-700 text-white">
                     Get started for free
                   </Button>
                 </div>
 
-                {/* Video Preview Container */}
                 <div className="flex-1 relative">
                   <motion.div
                     animate={{ scale: [1, 1.02, 1] }}
                     transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                     className="relative rounded-[2rem] overflow-hidden shadow-2xl"
                   >
-                    {/* Podcast-style video preview */}
-                    <div className="aspect-[9/16] bg-gradient-to-br from-purple-400 to-pink-400">
-                      <video
-                        className="w-full h-full object-cover"
-                        autoPlay
-                        muted
-                        loop
-                        playsInline
-                        poster="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80"
-                      >
-                        <source
-                          src="https://cdn.coverr.co/videos/coverr-woman-talking-in-the-studio-8770/1080p.mp4"
-                          type="video/mp4"
-                        />
-                      </video>
+                    <div className="aspect-[9/16] bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
+                      <div className="w-full h-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                        <div className="text-6xl">👩‍💼</div>
+                      </div>
                     </div>
 
-                    {/* Floating Input Box with Typing Animation */}
                     <motion.div
                       initial={{ y: 20, opacity: 0 }}
                       animate={{ y: 0, opacity: 1 }}
@@ -237,73 +210,80 @@ export default function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="rounded-[2rem] bg-gradient-to-br from-emerald-400 via-green-500 to-emerald-600 overflow-hidden relative min-h-[500px]"
+              className="rounded-[2rem] bg-gradient-to-br from-green-400 to-emerald-500 overflow-hidden relative min-h-[500px]"
             >
               <div className="p-8 h-full flex flex-col justify-between">
-                <div className="pointer-events-none absolute inset-0">
-                  <div className="absolute -top-20 -left-16 w-48 h-48 rounded-full bg-white/25 blur-3xl" />
-                  <div className="absolute -bottom-16 -right-10 w-56 h-56 rounded-full bg-emerald-900/30 blur-3xl" />
-                </div>
                 <div className="space-y-4">
                   <h3 className="text-3xl font-bold text-white">
                     Speak any language with an AI video translator
                   </h3>
                   <p className="text-white/90 text-sm">
-                    Speak 175+ languages and dialects with a click. Upload a video and HeyGen's AI video translator will translate into another language with natural lip-sync and subtitles.
+                    Speak 175+ languages and dialects with a click. Upload a video and translate into another language with natural lip-sync and subtitles.
                   </p>
                 </div>
 
-                {/* Language Selector — inline between text and image */}
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="mt-6 bg-white/90 backdrop-blur-lg rounded-[1.5rem] p-4 border border-white/30 shadow-[0_12px_35px_rgba(0,0,0,0.15)] w-fit"
-                >
-                  <div className="flex items-center gap-2 text-xs text-gray-500 mb-3">
-                    <Globe className="w-4 h-4" />
-                    <span className="font-semibold">Voice</span>
+                <div className="relative h-64 mt-8">
+                  <div className="flex gap-4 justify-center items-center h-full">
+                    {[
+                      { flag: '🇨🇳', offset: -20 },
+                      { flag: '🇺🇸', offset: 0 },
+                      { flag: '🇫🇷', offset: 20 },
+                    ].map((item, idx) => (
+                      <motion.div
+                        key={idx}
+                        initial={{ opacity: 0, x: item.offset }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.2 }}
+                        className="relative w-32 h-48 rounded-2xl overflow-hidden shadow-lg"
+                        style={{ zIndex: idx === 1 ? 10 : 5 }}
+                      >
+                        <div className="w-full h-full bg-gradient-to-br from-emerald-600 to-green-700 flex items-center justify-center">
+                          <div className="text-4xl">👩</div>
+                        </div>
+                        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2">
+                          <div className="text-2xl bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg">
+                            {item.flag}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
                   </div>
-                  {languages.map((lang, idx) => (
-                    <motion.div
-                      key={lang}
-                      animate={{
-                        backgroundColor: activeLanguage === idx ? 'rgba(34, 197, 94, 0.15)' : 'transparent',
-                      }}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
-                    >
-                      <div className="w-7 h-7 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-xs font-bold text-white shadow-sm">
-                        {['GB', 'FR', 'ES'][idx]}
-                      </div>
-                      <span className="text-sm font-semibold text-gray-800">{lang}</span>
-                    </motion.div>
-                  ))}
-                </motion.div>
-
-                {/* Podcast image preview */}
-                <div className="relative mt-6">
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="rounded-[1.75rem] overflow-hidden shadow-[0_18px_50px_rgba(0,0,0,0.25)] ring-1 ring-white/10"
-                  >
-                    <div className="aspect-[4/3] bg-gradient-to-br from-emerald-800 to-green-900">
-                      <img
-                        src="/woman-podcaster-recording-an-audio-podcast-in-a-radio-station-or-podcast-studio-with-a-focus-on-her-face-ai-generated-photo.webp"
-                        alt="Podcast host recording"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </motion.div>
                 </div>
+
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.8 }}
+                  className="absolute top-8 right-8 bg-white/95 dark:bg-white/10 backdrop-blur-lg rounded-[1.5rem] p-4 border border-white/20 shadow-xl"
+                >
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-xs text-foreground/85 mb-3">
+                      <Globe className="w-4 h-4" />
+                      <span className="font-semibold">Voice</span>
+                    </div>
+                    {languages.map((lang, idx) => (
+                      <motion.div
+                        key={lang}
+                        animate={{
+                          backgroundColor: activeLanguage === idx ? 'rgba(34, 197, 94, 0.2)' : 'transparent',
+                        }}
+                        className="flex items-center gap-3 px-3 py-2 rounded-lg transition-colors"
+                      >
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center text-xs">
+                          {['🇬🇧', '🇫🇷', '🇪🇸'][idx]}
+                        </div>
+                        <span className="text-sm font-medium text-foreground">{lang}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
               </div>
             </motion.div>
           </div>
 
           {/* Second Row */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-            {/* Feature 3: Voice Cloning & Lip-Sync - Large Card (Spans 2 columns) */}
+            {/* Feature 3: Voice Cloning & Lip-Sync */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -312,7 +292,6 @@ export default function Features() {
               className="lg:col-span-2 rounded-[2rem] bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-950/20 dark:to-teal-950/20 border border-border overflow-hidden relative min-h-[400px]"
             >
               <div className="p-8 lg:p-12 h-full flex flex-col lg:flex-row gap-8 items-center">
-                {/* Video Preview */}
                 <div className="flex-1 relative">
                   <motion.div
                     animate={{ scale: [1, 1.01, 1] }}
@@ -326,7 +305,6 @@ export default function Features() {
                       </div>
                     </div>
 
-                    {/* Voice Tone Control Panel */}
                     <motion.div
                       initial={{ x: 20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
@@ -373,7 +351,7 @@ export default function Features() {
                               <span className="text-xs font-semibold text-green-700 dark:text-green-400">Calm</span>
                             </div>
                             <p className="text-sm font-mono text-green-800 dark:text-green-300">
-                              "Slowly breathe in and out"
+                              &quot;Slowly breathe in and out&quot;
                             </p>
                           </motion.div>
                         )}
@@ -382,7 +360,6 @@ export default function Features() {
                   </motion.div>
                 </div>
 
-                {/* Text Content */}
                 <div className="flex-1 space-y-4">
                   <h3 className="text-3xl lg:text-4xl font-bold text-foreground">
                     Voice cloning and lip-sync

@@ -30,7 +30,7 @@ const NotFound = () => {
             Page not found
           </h1>
 
-          <p className="text-lg text-foreground/60 mb-8 max-w-md mx-auto">
+          <p className="text-lg text-foreground/85 mb-8 max-w-md mx-auto">
             Sorry, we couldn't find the page you're looking for. It might have been moved or doesn't exist.
           </p>
 

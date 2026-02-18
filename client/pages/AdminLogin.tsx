@@ -59,7 +59,7 @@ export default function AdminLogin() {
               <Lock className="w-6 h-6 text-primary" />
             </div>
             <h1 className="text-3xl font-bold text-foreground mb-2">Admin Portal</h1>
-            <p className="text-foreground/60">Secure access for administrators only</p>
+            <p className="text-foreground/85">Secure access for administrators only</p>
           </div>
 
           {/* Login Form */}
@@ -117,7 +117,7 @@ export default function AdminLogin() {
           <div className="mt-6 text-center">
             <button
               onClick={() => navigate('/')}
-              className="text-sm text-foreground/60 hover:text-foreground transition-colors"
+              className="text-sm text-foreground/85 hover:text-foreground transition-colors"
             >
               ← Back to Home
             </button>

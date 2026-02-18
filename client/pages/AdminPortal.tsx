@@ -24,7 +24,7 @@ export default function AdminPortal() {
       id: '1',
       full_name: 'John Doe',
       email: 'john@example.com',
-      credit_balance: 100,
+      credit_balance: 30,
       role: 'user',
       created_at: '2024-01-15',
     },
@@ -32,7 +32,7 @@ export default function AdminPortal() {
       id: '2',
       full_name: 'Jane Smith',
       email: 'jane@example.com',
-      credit_balance: 50,
+      credit_balance: 30,
       role: 'user',
       created_at: '2024-01-20',
     },
@@ -81,13 +81,13 @@ export default function AdminPortal() {
               <h1 className="text-4xl font-bold text-foreground mb-2">
                 Admin Portal
               </h1>
-              <p className="text-lg text-foreground/60">
+              <p className="text-lg text-foreground/85">
                 Manage users and monitor platform activity
               </p>
             </div>
             <div className="flex items-center gap-4">
               <div className="text-right">
-                <p className="text-sm text-foreground/60">Admin User</p>
+                <p className="text-sm text-foreground/85">Admin User</p>
                 <p className="text-lg font-semibold text-foreground">{user.full_name}</p>
               </div>
               <Button
@@ -106,7 +106,7 @@ export default function AdminPortal() {
             <div className="p-6 rounded-xl bg-card border border-border">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-foreground/60 text-sm mb-1">Total Users</p>
+                  <p className="text-foreground/85 text-sm mb-1">Total Users</p>
                   <p className="text-3xl font-bold text-foreground">
                     {users.length}
                   </p>
@@ -118,7 +118,7 @@ export default function AdminPortal() {
             <div className="p-6 rounded-xl bg-card border border-border">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-foreground/60 text-sm mb-1">
+                  <p className="text-foreground/85 text-sm mb-1">
                     Total Credits Distributed
                   </p>
                   <p className="text-3xl font-bold text-foreground">
@@ -134,7 +134,7 @@ export default function AdminPortal() {
             <div className="p-6 rounded-xl bg-card border border-border">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-foreground/60 text-sm mb-1">Videos Generated</p>
+                  <p className="text-foreground/85 text-sm mb-1">Videos Generated</p>
                   <p className="text-3xl font-bold text-foreground">24</p>
                 </div>
                 <Image className="w-8 h-8 text-secondary opacity-50" />
@@ -154,22 +154,22 @@ export default function AdminPortal() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border">
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/70">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/90">
                       Name
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/70">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/90">
                       Email
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/70">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/90">
                       Credits
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/70">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/90">
                       Role
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/70">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/90">
                       Joined
                     </th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/70">
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-foreground/90">
                       Actions
                     </th>
                   </tr>
@@ -183,7 +183,7 @@ export default function AdminPortal() {
                       <td className="px-6 py-4 text-sm font-medium text-foreground">
                         {u.full_name}
                       </td>
-                      <td className="px-6 py-4 text-sm text-foreground/70">
+                      <td className="px-6 py-4 text-sm text-foreground/90">
                         {u.email}
                       </td>
                       <td className="px-6 py-4 text-sm text-foreground">
@@ -210,13 +210,13 @@ export default function AdminPortal() {
                           className={`px-3 py-1 rounded-full text-xs font-medium ${
                             u.role === 'admin'
                               ? 'bg-primary/10 text-primary'
-                              : 'bg-foreground/10 text-foreground/70'
+                              : 'bg-foreground/10 text-foreground/90'
                           }`}
                         >
                           {u.role}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-foreground/70">
+                      <td className="px-6 py-4 text-sm text-foreground/90">
                         {u.created_at}
                       </td>
                       <td className="px-6 py-4 text-sm">
@@ -256,7 +256,7 @@ export default function AdminPortal() {
                 <h2 className="text-lg font-semibold text-foreground mb-1">
                   Video Storage
                 </h2>
-                <p className="text-foreground/60 text-sm">
+                <p className="text-foreground/85 text-sm">
                   View and manage videos in narrately-videos bucket
                 </p>
               </div>
@@ -274,7 +274,7 @@ export default function AdminPortal() {
                 >
                   <div className="text-center">
                     <div className="text-3xl mb-2">🎬</div>
-                    <p className="text-xs text-foreground/60">Video {i}.mp4</p>
+                    <p className="text-xs text-foreground/85">Video {i}.mp4</p>
                   </div>
                 </div>
               ))}

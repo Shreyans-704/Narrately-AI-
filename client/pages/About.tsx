@@ -8,7 +8,19 @@ export default function About() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background dark">
+    <div className="min-h-screen bg-background dark relative">
+      {/* Site-wide N background */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <img src="/ai-bg.svg" alt="" className="w-full h-full object-cover opacity-50" />
+        <div className="floating-logos" aria-hidden>
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--large" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--med" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--small" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--med" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--small" alt="" />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/60" />
+      </div>
       <Header />
 
       {/* Hero Section */}
@@ -23,7 +35,7 @@ export default function About() {
               Creation Studio
             </span>
           </h1>
-          <p className="text-xl text-foreground/70 mb-8">
+          <p className="text-xl text-foreground/90 mb-8">
             A powerful, user-friendly platform built with cutting-edge AI technology to revolutionize how you create professional videos.
           </p>
         </div>
@@ -37,13 +49,13 @@ export default function About() {
               <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
                 Our Mission
               </h2>
-              <p className="text-lg text-foreground/70 mb-4">
+              <p className="text-lg text-foreground/85 mb-4">
                 We believe that creating professional, engaging videos should be accessible to everyone, regardless of technical skill or budget.
               </p>
-              <p className="text-lg text-foreground/70 mb-4">
+              <p className="text-lg text-foreground/85 mb-4">
                 Narrately empowers creators, businesses, and teams to transform their ideas into stunning visual content using the power of artificial intelligence.
               </p>
-              <p className="text-lg text-foreground/70">
+              <p className="text-lg text-foreground/85">
                 Our platform removes barriers to video creation, making it faster, easier, and more affordable than ever before.
               </p>
             </div>
@@ -52,8 +64,7 @@ export default function About() {
               <h3 className="text-2xl font-bold text-foreground mb-3">
                 The Future of Video
               </h3>
-              <p className="text-foreground/70">
-                AI-powered creation is not the future—it's here now. Join thousands of creators already transforming their storytelling.
+              <p className="text-foreground/85">—it's here now. Join thousands of creators already transforming their storytelling.
               </p>
             </div>
           </div>
@@ -66,7 +77,7 @@ export default function About() {
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
             What We Offer
           </h2>
-          <p className="text-lg text-foreground/60 mb-12">
+          <p className="text-lg text-foreground/85 mb-12">
             A comprehensive suite of tools designed specifically for modern content creators
           </p>
 
@@ -113,8 +124,7 @@ export default function About() {
                 <h3 className="text-lg font-semibold text-foreground mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-foreground/60">
-                  {feature.description}
+                <p className="text-foreground/80">
                 </p>
               </div>
             ))}
@@ -128,7 +138,7 @@ export default function About() {
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
             Built on Modern Technology
           </h2>
-          <p className="text-lg text-foreground/60 mb-12">
+          <p className="text-lg text-foreground/85 mb-12">
             Narrately is engineered with the latest web technologies to ensure speed, reliability, and scalability
           </p>
 
@@ -158,7 +168,7 @@ export default function About() {
                   {tech.items.map((item, j) => (
                     <li
                       key={j}
-                      className="text-foreground/70 flex items-center gap-2"
+                      className="text-foreground/85 flex items-center gap-2"
                     >
                       <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
                       {item}
@@ -181,7 +191,7 @@ export default function About() {
                 <h3 className="text-2xl font-bold text-foreground mb-3">
                   User-Centric Design
                 </h3>
-                <p className="text-foreground/70 leading-relaxed">
+                <p className="text-foreground/85 leading-relaxed">
                   Every feature, every button, every interaction has been carefully crafted with the creator in mind. We believe that powerful tools should be intuitive and enjoyable to use. Our clean, modern interface removes complexity while maintaining professional-grade capabilities.
                 </p>
               </div>
@@ -193,7 +203,7 @@ export default function About() {
                 <h3 className="text-2xl font-bold text-foreground mb-3">
                   Performance First
                 </h3>
-                <p className="text-foreground/70 leading-relaxed">
+                <p className="text-foreground/85 leading-relaxed">
                   Speed matters when you're creating content on deadline. Narrately is built for performance, with lightning-fast video generation and a snappy, responsive interface that keeps up with your creative workflow.
                 </p>
               </div>
@@ -208,7 +218,7 @@ export default function About() {
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
             Passionate Team
           </h2>
-          <p className="text-lg text-foreground/60 mb-12 max-w-2xl mx-auto">
+          <p className="text-lg text-foreground/85 mb-12 max-w-2xl mx-auto">
             Behind Narrately is a team of creators, engineers, and designers dedicated to making video creation accessible to everyone.
           </p>
 
@@ -216,7 +226,7 @@ export default function About() {
             <h3 className="text-2xl font-bold text-foreground mb-4">
               Join Our Community
             </h3>
-            <p className="text-foreground/70 mb-8 max-w-xl mx-auto">
+            <p className="text-foreground/85 mb-8 max-w-xl mx-auto">
               We're growing fast and would love to hear from you. Whether you're a creator looking to streamline your workflow or a business exploring video content, we're here to help you succeed.
             </p>
             <Button
@@ -235,7 +245,7 @@ export default function About() {
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
             Ready to start creating?
           </h2>
-          <p className="text-lg text-foreground/60 mb-8">
+          <p className="text-lg text-foreground/85 mb-8">
             Join thousands of creators already using Narrately to transform their storytelling
           </p>
           <Button

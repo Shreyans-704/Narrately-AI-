@@ -1,95 +1,142 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
-import { Button } from '@/components/ui/button';
-import { Zap, Flame } from 'lucide-react';
+import { Zap, Flame, ArrowRight } from 'lucide-react';
 import { getCurrentUser, signOut } from '@/lib/supabase';
+
+const navVariants = {
+  hidden: { opacity: 0, y: -6 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.22, ease: 'easeOut' } },
+  exit: { opacity: 0, y: 6, transition: { duration: 0.18, ease: 'easeIn' } },
+};
 
 export function Header() {
   const { user, logout, isTrialActive, getTrialDaysRemaining } = useAuthStore();
+  const navigate = useNavigate();
+  const isLoggedIn = !!user;
   const onTrial = isTrialActive();
   const trialDaysRemaining = getTrialDaysRemaining();
 
+  const handleSignOut = async () => {
+    await signOut();
+    logout();
+    // Clear any persisted session data
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+    } catch (_) {}
+    navigate('/');
+  };
+
   return (
-    <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl border-b border-border">
+    <header className="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-md border-b border-white/10">
       <nav className="container max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2 font-bold text-xl text-foreground hover:text-primary transition-colors">
-          <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
+        <Link
+          to="/"
+          className="flex items-center gap-2 font-bold text-xl text-white hover:text-[#00C2FF] transition-colors"
+        >
+          <div className="w-8 h-8 bg-gradient-to-br from-[#00C2FF] to-purple-500 rounded-lg flex items-center justify-center">
             <span className="text-white font-black">N</span>
           </div>
           <span>Narrately</span>
         </Link>
 
-        {/* Nav Items */}
+        {/* Central Nav Links */}
         <div className="hidden md:flex items-center gap-8">
-          <Link to="/features" className="text-foreground/80 hover:text-foreground transition-colors text-sm">
+          <Link
+            to="/features"
+            className="text-white/70 hover:text-white transition-colors text-sm"
+          >
             Features
           </Link>
-          <Link to="/pricing" className="text-foreground/80 hover:text-foreground transition-colors text-sm">
+          <Link
+            to="/pricing"
+            className="text-white/70 hover:text-white transition-colors text-sm"
+          >
             Pricing
           </Link>
-          <Link to="/about" className="text-foreground/80 hover:text-foreground transition-colors text-sm">
+          <Link
+            to="/about"
+            className="text-white/70 hover:text-white transition-colors text-sm"
+          >
             About
           </Link>
         </div>
 
-        {/* Right Section */}
-        <div className="flex items-center gap-4">
-            {/* Ensure auth store is populated on mount */}
-            {/* This will hide Sign In / Get Started when a session exists */}
-            {typeof window !== 'undefined' && (
-              <AuthInitializer />
-            )}
-          {user ? (
-            <>
-              {/* Trial Status & Credits Display */}
-              <div className="flex items-center gap-3">
+        {/* Right Section — animated swap between auth states */}
+        <div className="flex items-center gap-3 min-w-0">
+          {/* Populate auth store on mount */}
+          {typeof window !== 'undefined' && <AuthInitializer />}
+
+          <AnimatePresence mode="wait" initial={false}>
+            {isLoggedIn ? (
+              <motion.div
+                key="logged-in"
+                variants={navVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="flex items-center gap-3"
+              >
+                {/* Trial badge */}
                 {onTrial && (
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/15 border border-primary/30 text-xs font-medium text-primary">
-                    <Flame className="w-3 h-3" />
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-white/15 text-xs font-medium text-[#00C2FF]">
+                    <Flame className="w-3 h-3 text-[#00C2FF]" />
                     {trialDaysRemaining}d left
                   </div>
                 )}
-                <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-card border border-border">
-                  <Zap className="w-4 h-4 text-accent" />
-                  <span className="text-sm font-medium text-foreground">
-                    {user.credit_balance} Credits
-                  </span>
+
+                {/* Credits badge */}
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-white/15 text-xs font-semibold text-white">
+                  <Zap className="w-3.5 h-3.5 text-[#4ade80]" />
+                  {user!.credit_balance} Credits
                 </div>
-              </div>
 
-              {/* User Menu */}
-              <Link to="/dashboard">
-                <Button variant="outline" size="sm">
-                  Dashboard
-                </Button>
-              </Link>
+                {/* Dashboard button */}
+                <Link to="/studio">
+                  <button className="px-4 py-1.5 rounded-lg bg-[#1a1a1a] border border-white/25 text-white text-sm font-medium hover:bg-[#252525] transition-colors">
+                    Dashboard
+                  </button>
+                </Link>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={async () => {
-                  await signOut();
-                  logout();
-                  window.location.href = '/';
-                }}
+                {/* Sign Out button */}
+                <button
+                  onClick={handleSignOut}
+                  className="px-4 py-1.5 rounded-lg text-white/80 text-sm font-medium hover:text-white transition-colors"
+                >
+                  Sign Out
+                </button>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="logged-out"
+                variants={navVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="flex items-center gap-3"
               >
-                Sign Out
-              </Button>
-            </>
-          ) : (
-            <>
-              <Link to="/login">
-                <Button variant="ghost" size="sm">
+                {/* Sign In */}
+                <Link
+                  to="/login"
+                  className="px-4 py-1.5 rounded-lg text-white/80 text-sm font-medium hover:text-white transition-colors"
+                >
                   Sign In
-                </Button>
-              </Link>
-              <Link to="/signup">
-                <Button size="sm">Get Started</Button>
-              </Link>
-            </>
-          )}
+                </Link>
+
+                {/* Get Started Free */}
+                <Link
+                  to="/signup"
+                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#00C2FF] text-black text-sm font-semibold hover:bg-[#00aadd] transition-colors"
+                >
+                  Get Started Free
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </nav>
     </header>
@@ -103,16 +150,11 @@ function AuthInitializer() {
     let mounted = true;
     (async () => {
       try {
-        const { user, error } = await getCurrentUser();
+        const { user } = await getCurrentUser();
         if (!mounted) return;
-        if (user) {
-          setUser(user as any);
-        }
-      } catch (e) {
-        // ignore
-      }
+        if (user) setUser(user as any);
+      } catch (_) {}
     })();
-
     return () => {
       mounted = false;
     };

@@ -33,7 +33,7 @@ export const handleSignup: RequestHandler = async (req, res) => {
         email,
         full_name: fullName,
         role: 'user',
-        credit_balance: 100,
+        credit_balance: 30,
         trial_ends_at: trialEndDate.toISOString(),
       })
       .select()

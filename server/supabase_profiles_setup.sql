@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   full_name text,
   avatar_url text,
   role text DEFAULT 'user',
-  credit_balance integer DEFAULT 0,
+  credit_balance integer DEFAULT 30,
   trial_ends_at timestamptz,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()

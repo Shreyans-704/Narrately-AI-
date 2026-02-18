@@ -155,7 +155,7 @@ export async function signIn(email: string, password: string) {
           email,
           full_name: (data.user.user_metadata as any)?.full_name || null,
           role: 'user',
-          credit_balance: 100,
+          credit_balance: 30,
           trial_ends_at: trialEndDate.toISOString(),
         })
         .select()
@@ -183,12 +183,12 @@ export async function signOut() {
   }
 }
 
-export async function signInWithGoogle() {
+export async function signInWithGoogle(redirectPath = '/studio') {
   try {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/dashboard`,
+        redirectTo: `${window.location.origin}${redirectPath}`,
       },
     });
 
@@ -214,6 +214,15 @@ export async function getCurrentUser() {
       .single();
 
     if (profileError) throw profileError;
+
+    // Migrate old accounts that still have the legacy 100-credit default → 30
+    if (profileData && profileData.credit_balance === 100) {
+      await supabase
+        .from('profiles')
+        .update({ credit_balance: 30 })
+        .eq('id', user.id);
+      profileData.credit_balance = 30;
+    }
 
     return { user: profileData, error: null };
   } catch (error) {

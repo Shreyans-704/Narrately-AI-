@@ -5,8 +5,9 @@ import { Hero3D } from '../components/Hero3D';
 import { ShortsVideoGrid } from '@/components/ShortsVideoGrid';
 import { Footer } from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { signInWithGoogle } from '@/lib/supabase';
+import { AIStudio } from '@/components/AIStudio';
 
 export default function Index() {
   const navigate = useNavigate();
@@ -49,29 +50,43 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-background dark">
+    <div className="min-h-screen bg-background dark relative">
+      {/* Site-wide fixed N background */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <img src="/ai-bg.svg" alt="" className="w-full h-full object-cover opacity-50" />
+        <div className="floating-logos" aria-hidden>
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--large" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--med" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--small" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--med" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--small" alt="" />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/60" />
+      </div>
       <Header />
 
       {/* Hero Section */}
       <section className="pt-20 md:pt-0 min-h-screen flex items-center relative overflow-hidden">
-        {/* Background gradient effects */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-accent/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        {/* AI background — same as login page */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <img src="/ai-bg.svg" alt="" className="w-full h-full object-cover opacity-70" />
+
+          {/* floating Narrately N logos */}
+          <div className="floating-logos" aria-hidden>
+            <img src="/narrately-logo.svg" className="floating-logo floating-logo--large" alt="" />
+            <img src="/narrately-logo.svg" className="floating-logo floating-logo--med" alt="" />
+            <img src="/narrately-logo.svg" className="floating-logo floating-logo--small" alt="" />
+            <img src="/narrately-logo.svg" className="floating-logo floating-logo--med" alt="" />
+            <img src="/narrately-logo.svg" className="floating-logo floating-logo--small" alt="" />
+          </div>
+
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/90" />
         </div>
 
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - Content */}
             <div className="flex flex-col gap-8 animate-fade-in">
-              {/* Promo Badge */}
-              <div className="mt-10 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/25 border border-blue-300/60 shadow-[0_10px_30px_rgba(59,130,246,0.25)] backdrop-blur w-fit">
-                <Sparkles className="w-4 h-4 text-blue-200" />
-                <span className="text-sm text-blue-100 font-semibold">
-                  Limited: 100 Credits Free for First 3 Months
-                </span>
-              </div>
-
               {/* Main Headline */}
               <div className="flex flex-col gap-4">
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight text-foreground">
@@ -98,7 +113,7 @@ export default function Index() {
                   </span>
                 </h1>
 
-                <p className="text-lg sm:text-xl text-foreground/70 max-w-xl">
+                <p className="text-lg sm:text-xl text-foreground/90 max-w-xl">
                   Generate AI videos with prompt, image, and voice recognition.
                   Create stunning content in seconds, not days.
                 </p>
@@ -158,7 +173,7 @@ export default function Index() {
               </div>
 
               {/* Trust Indicators */}
-              <div className="pt-4 flex items-center gap-4 text-sm text-foreground/60">
+              <div className="pt-4 flex items-center gap-4 text-sm text-foreground/85">
                 <div className="flex -space-x-2">
                   {[1, 2, 3].map((i) => (
                     <div
@@ -184,11 +199,16 @@ export default function Index() {
         </div>
       </section>
 
-      <section className="py-16 border-t border-border">
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+      <section className="py-16 border-t border-border relative overflow-hidden">
+        {/* AI background */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <img src="/ai-bg.svg" alt="" className="w-full h-full object-cover opacity-40" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-transparent to-background/80" />
+        </div>
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="flex items-center justify-between gap-6 mb-8">
             <div>
-              <p className="text-xs uppercase tracking-[0.2em] text-foreground/50">
+              <p className="text-xs uppercase tracking-[0.2em] text-foreground/80">
                 Shorts
               </p>
               <h2 className="text-2xl sm:text-3xl font-semibold text-foreground">
@@ -202,13 +222,15 @@ export default function Index() {
 
 
 
+      <AIStudio />
+
       {/* CTA Footer */}
       <section className="py-20 border-t border-border">
         <div className="container max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
             Ready to transform your storytelling?
           </h2>
-          <p className="text-lg text-foreground/60 mb-8">
+          <p className="text-lg text-foreground/85 mb-8">
             Start creating free today. No credit card required.
           </p>
           <Button

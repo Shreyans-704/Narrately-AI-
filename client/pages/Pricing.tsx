@@ -13,9 +13,7 @@ export default function Pricing() {
       price: 'Free',
       description: 'Perfect for trying out Narrately',
       features: [
-        '100 free credits to start',
-        '3 months trial period',
-        '5 videos per month',
+        '30 free credits to start',
         'Basic avatars',
         'Text to video',
         'Email support',
@@ -80,12 +78,24 @@ export default function Pricing() {
     {
       question: 'Is there a free trial?',
       answer:
-        'Absolutely! Start with 100 free credits for your first 3 months to explore all features without any payment.',
+        'Absolutely! Start with 30 free credits to explore all features without any payment.',
     },
   ];
 
   return (
-    <div className="min-h-screen bg-background dark">
+    <div className="min-h-screen bg-background dark relative">
+      {/* Site-wide N background */}
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+        <img src="/ai-bg.svg" alt="" className="w-full h-full object-cover opacity-50" />
+        <div className="floating-logos" aria-hidden>
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--large" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--med" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--small" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--med" alt="" />
+          <img src="/narrately-logo.svg" className="floating-logo floating-logo--small" alt="" />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-transparent to-background/60" />
+      </div>
       <Header />
 
       {/* Hero Section */}
@@ -97,7 +107,7 @@ export default function Pricing() {
               pricing
             </span>
           </h1>
-          <p className="text-lg sm:text-xl text-foreground/70 mb-4">
+          <p className="text-lg sm:text-xl text-foreground/90 mb-4">
             Choose the perfect plan for your video creation needs
           </p>
           <div className="flex justify-center gap-4 mt-8">
@@ -137,7 +147,7 @@ export default function Pricing() {
                   <h3 className="text-2xl font-bold text-foreground mb-2">
                     {plan.name}
                   </h3>
-                  <p className="text-foreground/60 text-sm mb-6">
+                  <p className="text-foreground/85 text-sm mb-6">
                     {plan.description}
                   </p>
 
@@ -146,7 +156,7 @@ export default function Pricing() {
                       {plan.price}
                     </span>
                     {plan.period && (
-                      <span className="text-foreground/60 ml-2">
+                      <span className="text-foreground/85 ml-2">
                         {plan.period}
                       </span>
                     )}
@@ -190,7 +200,7 @@ export default function Pricing() {
             <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-lg text-foreground/60">
+            <p className="text-lg text-foreground/85">
               Everything you need to know about our pricing
             </p>
           </div>
@@ -204,7 +214,7 @@ export default function Pricing() {
                 <h3 className="text-lg font-semibold text-foreground mb-3">
                   {faq.question}
                 </h3>
-                <p className="text-foreground/70">
+                <p className="text-foreground/90">
                   {faq.answer}
                 </p>
               </div>
@@ -215,7 +225,7 @@ export default function Pricing() {
             <h3 className="text-2xl font-bold text-foreground mb-4">
               Still have questions?
             </h3>
-            <p className="text-foreground/70 mb-6">
+            <p className="text-foreground/90 mb-6">
               Our support team is here to help. Contact us anytime.
             </p>
             <Button
@@ -234,8 +244,8 @@ export default function Pricing() {
           <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-6">
             Ready to start creating?
           </h2>
-          <p className="text-lg text-foreground/60 mb-8">
-            All plans include 100 free credits to get started. No credit card required.
+          <p className="text-lg text-foreground/85 mb-8">
+            All plans include 30 free credits to get started. No credit card required.
           </p>
           <Button
             onClick={() => navigate('/signup')}

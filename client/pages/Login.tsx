@@ -52,7 +52,7 @@ export default function Login() {
           if ((currentUser as any).role === 'admin') {
             navigate('/admin-portal');
           } else {
-            navigate('/dashboard');
+            navigate('/studio');
           }
           return;
         }
@@ -70,7 +70,7 @@ export default function Login() {
           if ((currentUser as any).role === 'admin') {
             navigate('/admin-portal');
           } else {
-            navigate('/dashboard');
+            navigate('/studio');
           }
           return;
         }
@@ -86,7 +86,7 @@ export default function Login() {
       if ((profile as any).role === 'admin') {
         navigate('/admin-portal');
       } else {
-        navigate('/dashboard');
+        navigate('/studio');
       }
     } finally {
       setIsLoading(false);
@@ -99,7 +99,7 @@ export default function Login() {
 
     try {
       console.log('Initiating Google sign-in...');
-      const { data, error } = await signInWithGoogle();
+      const { data, error } = await signInWithGoogle('/studio');
       
       if (error) {
         console.error('Google signin error:', error);
@@ -139,7 +139,7 @@ export default function Login() {
       <div className="pt-20 md:pt-0 min-h-screen flex items-center justify-center px-4 relative z-10">
         <div className="w-full max-w-md">
           {/* Back Button */}
-          <Link to="/" className="inline-flex items-center gap-2 text-foreground/60 hover:text-foreground mb-8 transition-colors">
+          <Link to="/" className="inline-flex items-center gap-2 text-foreground/85 hover:text-foreground mb-8 transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Back to home
           </Link>
@@ -148,7 +148,7 @@ export default function Login() {
           <div className="rounded-xl border border-border bg-card p-8">
             <div className="mb-8">
               <h1 className="text-2xl font-bold text-foreground mb-2">Welcome back</h1>
-              <p className="text-foreground/60">Sign in to your Narrately account</p>
+              <p className="text-foreground/85">Sign in to your Narrately account</p>
             </div>
 
             {error && (
@@ -200,7 +200,7 @@ export default function Login() {
                 <div className="w-full border-t border-border"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-card text-foreground/60">Or continue with</span>
+                <span className="px-2 bg-card text-foreground/85">Or continue with</span>
               </div>
             </div>
 
@@ -233,7 +233,7 @@ export default function Login() {
             </Button>
 
             <div className="mt-8 p-4 rounded-lg bg-primary/10 border border-primary/20">
-              <p className="text-center text-xs text-foreground/70 mb-3">
+              <p className="text-center text-xs text-foreground/90 mb-3">
                 New to Narrately?
               </p>
               <Link to="/signup">
@@ -241,9 +241,6 @@ export default function Login() {
                   Sign up for Free Trial
                 </button>
               </Link>
-              <p className="text-center text-xs text-foreground/60 mt-2">
-                Get 100 credits + 3 months free
-              </p>
             </div>
 
 
