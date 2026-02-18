@@ -4,6 +4,8 @@ import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleSignup } from "./routes/signup";
 import { handleAdminLogin } from "./routes/admin-login";
+import { handleGetAdminUsers } from "./routes/admin-users";
+import { handleUpdateCredits, handleUpdateRole, handleDeleteUser } from "./routes/admin-manage";
 
 export function createServer() {
   const app = express();
@@ -22,6 +24,12 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
   app.post("/api/signup", handleSignup);
   app.post("/api/admin-login", handleAdminLogin);
+
+  // Admin management routes (protected by admin-login flow)
+  app.get("/api/admin/users", handleGetAdminUsers);
+  app.patch("/api/admin/users/:id/credits", handleUpdateCredits);
+  app.patch("/api/admin/users/:id/role", handleUpdateRole);
+  app.delete("/api/admin/users/:id", handleDeleteUser);
 
   return app;
 }

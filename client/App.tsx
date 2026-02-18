@@ -23,10 +23,9 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Onboarding from './pages/Onboarding';
 import StudioDashboard from './pages/StudioDashboard';
-import AdminPortal from './pages/AdminPortal';
+import AIAdminStudio from './pages/AIAdminStudio';
 import NotFound from "./pages/NotFound";
 import { AIAgentHelper } from "./components/AIAgentHelper";
-import { ProtectedAdminRoute } from "./components/ProtectedAdminRoute";
 
 const queryClient = new QueryClient();
 
@@ -46,7 +45,7 @@ const App = () => (
           <Route path="/signup" element={<Signup />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/studio" element={<StudioDashboard />} />
-          <Route path="/admin-portal" element={<ProtectedAdminRoute element={<AdminPortal />} />} />
+          <Route path="/admin-portal" element={<AIAdminStudio />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
