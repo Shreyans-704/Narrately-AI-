@@ -97,7 +97,7 @@ export default function Onboarding() {
           />
         </div>
 
-        <div className="px-8 py-12 min-h-[480px] flex flex-col">
+        <div className="px-5 py-8 sm:px-8 sm:py-12 min-h-[480px] flex flex-col">
           <AnimatePresence mode="wait" custom={dir}>
             {step === 1 && (
               <motion.div

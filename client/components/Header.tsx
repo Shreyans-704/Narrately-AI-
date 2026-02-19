@@ -1,8 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
-import { Zap, Flame, ArrowRight } from 'lucide-react';
+import { Zap, Flame, ArrowRight, Menu, X } from 'lucide-react';
 import { getCurrentUser, signOut } from '@/lib/supabase';
 
 const navVariants = {
@@ -17,8 +17,10 @@ export function Header() {
   const isLoggedIn = !!user;
   const onTrial = isTrialActive();
   const trialDaysRemaining = getTrialDaysRemaining();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleSignOut = async () => {
+    setMobileOpen(false);
     await signOut();
     logout();
     // Clear any persisted session data
@@ -31,16 +33,16 @@ export function Header() {
 
   return (
     <header className="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-md border-b border-white/10">
-      <nav className="container max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <nav className="container max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-2">
         {/* Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2 font-bold text-xl text-white hover:text-[#00C2FF] transition-colors"
+          className="flex items-center gap-2 font-bold text-xl text-white hover:text-[#00C2FF] transition-colors flex-shrink-0"
         >
-          <div className="w-8 h-8 bg-gradient-to-br from-[#00C2FF] to-purple-500 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 bg-gradient-to-br from-[#00C2FF] to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
             <span className="text-white font-black">N</span>
           </div>
-          <span>Narrately</span>
+          <span className="whitespace-nowrap">Narrately</span>
         </Link>
 
         {/* Central Nav Links */}
@@ -118,10 +120,10 @@ export function Header() {
                 exit="exit"
                 className="flex items-center gap-3"
               >
-                {/* Sign In */}
+                {/* Sign In — hidden on mobile (available in hamburger menu) */}
                 <Link
                   to="/login"
-                  className="px-4 py-1.5 rounded-lg text-white/80 text-sm font-medium hover:text-white transition-colors"
+                  className="hidden md:block px-4 py-1.5 rounded-lg text-white/80 text-sm font-medium hover:text-white transition-colors"
                 >
                   Sign In
                 </Link>
@@ -129,16 +131,53 @@ export function Header() {
                 {/* Get Started Free */}
                 <Link
                   to="/signup"
-                  className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-[#00C2FF] text-black text-sm font-semibold hover:bg-[#00aadd] transition-colors"
+                  className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-lg bg-[#00C2FF] text-black text-sm font-semibold hover:bg-[#00aadd] transition-colors whitespace-nowrap"
                 >
-                  Get Started Free
+                  <span className="hidden sm:inline">Get Started Free</span>
+                  <span className="sm:hidden">Get Started</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </motion.div>
             )}
           </AnimatePresence>
+        {/* Hamburger — mobile only */}
+          <button
+            className="md:hidden text-white/70 hover:text-white transition-colors p-1"
+            onClick={() => setMobileOpen((o) => !o)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </nav>
+
+      {/* Mobile dropdown menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18 }}
+            className="md:hidden bg-black/95 backdrop-blur-md border-b border-white/10 px-6 py-4 flex flex-col gap-3"
+          >
+            <Link to="/features" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">Features</Link>
+            <Link to="/pricing" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">Pricing</Link>
+            <Link to="/about" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">About</Link>
+            {isLoggedIn ? (
+              <>
+                <Link to="/studio" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">Dashboard</Link>
+                <button onClick={handleSignOut} className="text-left text-white/70 hover:text-white transition-colors text-sm py-2">Sign Out</button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">Sign In</Link>
+                <Link to="/signup" onClick={() => setMobileOpen(false)} className="mt-1 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#00C2FF] text-black text-sm font-semibold hover:bg-[#00aadd] transition-colors w-fit">Get Started Free <ArrowRight className="w-3.5 h-3.5" /></Link>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

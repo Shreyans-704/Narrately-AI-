@@ -121,7 +121,18 @@ export default function Login() {
   ];
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen">
+      {/* ── Mobile-only top logo bar ── */}
+      <div className="flex lg:hidden items-center gap-2 px-4 py-4 bg-background dark relative z-20">
+        <img src="/ai-bg.svg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" />
+        <Link to="/" className="flex items-center gap-2 font-bold text-lg text-white relative z-10">
+          <div className="w-7 h-7 bg-gradient-to-br from-[#00C2FF] to-purple-500 rounded-lg flex items-center justify-center">
+            <span className="text-white font-black text-sm">N</span>
+          </div>
+          <span>Narrately</span>
+        </Link>
+      </div>
+
       {/* ── Left: Marketing Sidebar ── */}
       <div className="hidden lg:flex lg:w-1/2 relative flex-col">
         {/* Background image */}
@@ -134,7 +145,7 @@ export default function Login() {
         <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-blue-950/70 to-black/80" />
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col justify-between h-full p-10">
+        <div className="relative z-10 flex flex-col justify-between h-full p-6 lg:p-10">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 font-bold text-xl text-white hover:text-[#00C2FF] transition-colors">
             <div className="w-8 h-8 bg-gradient-to-br from-[#00C2FF] to-purple-500 rounded-lg flex items-center justify-center">
@@ -145,7 +156,7 @@ export default function Login() {
 
           {/* Bottom copy */}
           <div>
-            <h2 className="text-white font-bold text-3xl leading-tight mb-6">
+            <h2 className="text-white font-bold text-2xl lg:text-3xl leading-tight mb-6">
               Join Millions of Creators that Trust Narrately AI to Supercharge Their Stories
             </h2>
             <ul className="space-y-3">
@@ -161,7 +172,7 @@ export default function Login() {
       </div>
 
       {/* ── Right: Auth Form ── */}
-      <div className="flex flex-1 items-center justify-center bg-background dark px-6 py-12 relative overflow-hidden">
+      <div className="flex flex-1 items-center justify-center bg-background dark px-4 py-8 md:px-8 md:py-12 relative overflow-hidden">
         {/* Website normal background */}
         <img src="/ai-bg.svg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-70 pointer-events-none" />
         <div className="floating-logos pointer-events-none" aria-hidden>
@@ -174,15 +185,15 @@ export default function Login() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/90 pointer-events-none" />
 
         <div className="w-full max-w-sm relative z-10">
-          {/* Brand icon */}
-          <div className="flex justify-center mb-5">
+          {/* Brand icon – hidden on mobile since top bar shows logo */}
+          <div className="hidden lg:flex justify-center mb-5">
             <div className="w-12 h-12 rounded-2xl bg-blue-500 flex items-center justify-center shadow-md">
               <img src="/narrately-logo.svg" alt="Narrately" className="w-7 h-7" />
             </div>
           </div>
 
           <p className="text-center text-sm text-foreground/60 mb-1">Welcome to Narrately AI</p>
-          <h1 className="text-center text-xl font-bold text-foreground mb-6 leading-snug">
+          <h1 className="text-center text-lg md:text-xl font-bold text-foreground mb-5 md:mb-6 leading-snug">
             Sign in to your account
           </h1>
 

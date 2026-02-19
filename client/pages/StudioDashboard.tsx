@@ -18,6 +18,8 @@ import {
   ArrowUp,
   Bell,
   History,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { signOut } from '@/lib/supabase';
@@ -42,6 +44,7 @@ export default function StudioDashboard() {
   const [prompt, setPrompt] = useState('');
   const [avatarMode, setAvatarMode] = useState<'Auto' | 'Avatar'>('Auto');
   const [activeNav, setActiveNav] = useState('Home');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const displayName = user?.email?.split('@')[0] ?? 'Shreyans';
 
@@ -57,15 +60,35 @@ export default function StudioDashboard() {
 
   return (
     <div className="flex h-screen bg-[#080808] overflow-hidden font-sans">
+      {/* Mobile backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/60 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* ── Sidebar ── */}
-      <aside className="w-64 flex-shrink-0 bg-[#0b0c0e] border-r border-white/[0.07] flex flex-col">
-        {/* Logo */}
+      <aside
+        className={`fixed inset-y-0 left-0 z-40 w-64 flex-shrink-0 bg-[#0b0c0e] border-r border-white/[0.07] flex flex-col transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Logo + close button on mobile */}
         <div className="px-5 py-5 border-b border-white/[0.07]">
+          <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#00C2FF] to-purple-500 flex items-center justify-center flex-shrink-0">
               <span className="text-white font-black text-base">N</span>
             </div>
             <span className="text-white font-bold text-lg tracking-tight">Narrately</span>
+          </div>
+          <button
+            className="lg:hidden text-white/40 hover:text-white transition-colors"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <X className="w-4 h-4" />
+          </button>
           </div>
         </div>
 
@@ -147,18 +170,27 @@ export default function StudioDashboard() {
       {/* ── Main ── */}
       <main className="flex-1 flex flex-col overflow-hidden relative">
         {/* Top bar */}
-        <header className="flex items-center justify-end px-6 py-4 border-b border-white/[0.07] gap-3 flex-shrink-0">
-          <button className="relative text-white/50 hover:text-white transition-colors">
-            <Bell className="w-5 h-5" />
-            <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#00C2FF]" />
+        <header className="flex items-center justify-between px-4 py-4 border-b border-white/[0.07] flex-shrink-0">
+          <button
+            className="lg:hidden text-white/50 hover:text-white transition-colors"
+            onClick={() => setSidebarOpen(true)}
+          >
+            <Menu className="w-5 h-5" />
           </button>
-          <button className="text-white/50 hover:text-white transition-colors text-sm font-medium">
-            Resources
-          </button>
+          <div className="hidden lg:block" />
+          <div className="flex items-center gap-3">
+            <button className="relative text-white/50 hover:text-white transition-colors">
+              <Bell className="w-5 h-5" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#00C2FF]" />
+            </button>
+            <button className="text-white/50 hover:text-white transition-colors text-sm font-medium">
+              Resources
+            </button>
+          </div>
         </header>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto flex flex-col items-center justify-start px-6 py-12 relative">
+          <div className="flex-1 overflow-y-auto flex flex-col items-center justify-start px-4 py-8 md:px-6 md:py-12 relative">
           {/* Radial glow */}
           <div className="pointer-events-none absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px]">
             <div className="w-full h-full rounded-full bg-[radial-gradient(circle,rgba(0,194,255,0.13)_0%,transparent_70%)]" />

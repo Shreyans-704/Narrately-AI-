@@ -4,7 +4,7 @@ import {
   Users, Shield, LogOut, RefreshCw, Trash2, X,
   CheckCircle2, AlertCircle, Mail, Phone, Clock,
   Crown, Zap, BarChart3, Edit2, Save, ChevronRight,
-  Settings, LayoutDashboard, UserCog, TrendingUp,
+  Settings, LayoutDashboard, UserCog, TrendingUp, Menu,
 } from 'lucide-react';
 import { useAdminStore } from '@/store/adminStore';
 import { cn } from '@/lib/utils';
@@ -59,6 +59,7 @@ export default function AIAdminStudio() {
   const { adminUsername, logout } = useAdminStore();
 
   const [activeSection, setActiveSection] = useState<ActiveSection>('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -170,8 +171,22 @@ export default function AIAdminStudio() {
     <motion.div className="flex h-screen bg-[#050505] text-white overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
 
+      {/* Mobile backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/60 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* ── SIDEBAR ── */}
-      <aside className="fixed left-0 top-0 h-full w-60 z-30 flex flex-col border-r border-white/5 bg-white/[0.025] backdrop-blur-xl">
+      <aside
+        className={cn(
+          'fixed inset-y-0 left-0 h-full w-60 z-40 flex flex-col border-r border-white/5 bg-white/[0.025] backdrop-blur-xl transition-transform duration-300 ease-in-out',
+          'lg:static lg:translate-x-0',
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+        )}
+      >
         <div className="px-5 py-5 flex items-center gap-3 border-b border-white/5">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-violet-600 flex items-center justify-center flex-shrink-0">
             <Shield className="w-4 h-4 text-white" />
@@ -231,17 +246,25 @@ export default function AIAdminStudio() {
       </aside>
 
       {/* ── MAIN ── */}
-      <div className="ml-60 flex-1 flex flex-col overflow-y-auto">
-        <header className="sticky top-0 z-20 flex items-center justify-between px-8 py-4 border-b border-white/5 bg-[#050505]/90 backdrop-blur-md">
-          <div>
-            <h2 className="text-base font-semibold text-white">
-              {activeSection === 'overview' && 'Dashboard Overview'}
-              {activeSection === 'users' && 'User Management'}
-              {activeSection === 'roles' && 'Admins & Roles'}
-            </h2>
-            <p className="text-xs text-white/30 mt-0.5">
-              {loading ? 'Fetching data…' : `${signedInUsers.length} signed-in users · last updated just now`}
-            </p>
+      <div className="flex-1 flex flex-col overflow-y-auto min-w-0">
+        <header className="sticky top-0 z-20 flex items-center justify-between px-4 py-4 md:px-8 border-b border-white/5 bg-[#050505]/90 backdrop-blur-md">
+          <div className="flex items-center gap-3">
+            <button
+              className="lg:hidden text-white/50 hover:text-white transition-colors"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div>
+              <h2 className="text-base font-semibold text-white">
+                {activeSection === 'overview' && 'Dashboard Overview'}
+                {activeSection === 'users' && 'User Management'}
+                {activeSection === 'roles' && 'Admins & Roles'}
+              </h2>
+              <p className="text-xs text-white/30 mt-0.5">
+                {loading ? 'Fetching data…' : `${signedInUsers.length} signed-in users · last updated just now`}
+              </p>
+            </div>
           </div>
           <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
             onClick={fetchUsers} disabled={loading}
@@ -263,9 +286,9 @@ export default function AIAdminStudio() {
           )}
         </AnimatePresence>
 
-        <main className="flex-1 px-8 py-8 w-full">
+        <main className="flex-1 px-4 py-6 md:px-8 md:py-8 w-full">
           {/* Stats cards */}
-          <div className="grid grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
             {STAT_COLS.map(({ label, key, Icon, color, bg, border }) => (
               <motion.div key={key} whileHover={{ scale: 1.02 }}
                 className={cn('rounded-2xl border bg-white/[0.025] p-5 flex items-start justify-between', border)}>
