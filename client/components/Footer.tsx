@@ -16,17 +16,17 @@ export function Footer() {
               <span className="text-white font-black">N</span>
             </div>
             <div>
-              <p className="text-base font-semibold text-foreground">Narrately</p>
-              <p className="text-sm text-foreground/85">AI video creation for modern creators</p>
+              <p className="text-base font-bold text-foreground">Narrately</p>
+              <p className="text-sm font-semibold text-foreground">AI video creation for modern creators</p>
             </div>
           </div>
 
-          <nav className="flex flex-wrap items-center gap-6 text-sm text-foreground/90">
+          <nav className="flex flex-wrap items-center gap-6 text-sm font-bold text-foreground">
             {footerLinks.map((link) => (
               <Link
                 key={link.label}
                 to={link.to}
-                className="transition-colors hover:text-foreground"
+                className="transition-colors hover:text-primary"
               >
                 {link.label}
               </Link>
@@ -34,7 +34,7 @@ export function Footer() {
           </nav>
         </div>
 
-        <div className="mt-8 border-t border-border/60 pt-6 text-xs text-foreground/85">
+        <div className="mt-8 border-t border-border/60 pt-6 text-xs font-semibold text-foreground">
           <p>© 2026 Narrately. All rights reserved.</p>
         </div>
       </div>

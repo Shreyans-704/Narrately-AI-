@@ -50,7 +50,7 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-background dark relative">
+    <div className="min-h-screen bg-background relative">
       {/* Site-wide fixed N background */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         <img src="/ai-bg.svg" alt="" className="w-full h-full object-cover opacity-50" />

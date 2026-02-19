@@ -5,9 +5,11 @@ import {
   CheckCircle2, AlertCircle, Mail, Phone, Clock,
   Crown, Zap, BarChart3, Edit2, Save, ChevronRight,
   Settings, LayoutDashboard, UserCog, TrendingUp, Menu,
+  Sun, Moon,
 } from 'lucide-react';
 import { useAdminStore } from '@/store/adminStore';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/hooks/useTheme';
 
 interface AdminUser {
   id: string;
@@ -39,7 +41,7 @@ function shortId(id: string) {
 }
 
 const ProviderBadge = ({ provider }: { provider: string }) => (
-  <span className="inline-flex items-center gap-1 text-[10px] bg-white/8 border border-white/10 rounded-md px-1.5 py-0.5 text-white/55 font-medium">
+  <span className="inline-flex items-center gap-1 text-[10px] bg-foreground/[0.07] border border-border rounded-md px-1.5 py-0.5 text-foreground/60 font-semibold">
     {provider === 'google'
       ? <><span className="font-bold text-[9px] text-blue-400">G</span> Google</>
       : <><Mail className="w-2.5 h-2.5" /> Email</>}
@@ -57,6 +59,7 @@ type ActiveSection = 'overview' | 'users' | 'roles';
 
 export default function AIAdminStudio() {
   const { adminUsername, logout } = useAdminStore();
+  const { theme, toggle } = useTheme();
 
   const [activeSection, setActiveSection] = useState<ActiveSection>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -168,7 +171,7 @@ export default function AIAdminStudio() {
   ];
 
   return (
-    <motion.div className="flex h-screen bg-[#050505] text-white overflow-hidden"
+    <motion.div className="flex h-screen bg-background text-foreground overflow-hidden"
       initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
 
       {/* Mobile backdrop */}
@@ -182,18 +185,18 @@ export default function AIAdminStudio() {
       {/* ── SIDEBAR ── */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 h-full w-60 z-40 flex flex-col border-r border-white/5 bg-white/[0.025] backdrop-blur-xl transition-transform duration-300 ease-in-out',
+          'fixed inset-y-0 left-0 h-full w-60 z-40 flex flex-col border-r border-border bg-card backdrop-blur-xl transition-transform duration-300 ease-in-out',
           'lg:static lg:translate-x-0',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
-        <div className="px-5 py-5 flex items-center gap-3 border-b border-white/5">
+        <div className="px-5 py-5 flex items-center gap-3 border-b border-border">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-violet-600 flex items-center justify-center flex-shrink-0">
             <Shield className="w-4 h-4 text-white" />
           </div>
           <div>
-            <span className="text-white font-semibold text-sm tracking-tight block">Admin Portal</span>
-            <span className="text-white/30 text-[10px]">Narrately.ai</span>
+            <span className="text-foreground font-bold text-sm tracking-tight block">Admin Portal</span>
+            <span className="text-foreground/50 text-[10px] font-semibold">Narrately.ai</span>
           </div>
         </div>
 
@@ -203,8 +206,8 @@ export default function AIAdminStudio() {
               onClick={() => setActiveSection(section)}
               className={cn('w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left',
                 activeSection === section
-                  ? 'bg-cyan-500/10 text-cyan-300 border border-cyan-500/20'
-                  : 'text-white/45 hover:text-white hover:bg-white/5')}>
+                  ? 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 border border-cyan-500/20'
+                  : 'text-foreground/50 hover:text-foreground hover:bg-foreground/5')}>
               <Icon className="w-4 h-4 flex-shrink-0" />
               {label}
               {activeSection === section && <ChevronRight className="w-3.5 h-3.5 ml-auto" />}
@@ -212,34 +215,39 @@ export default function AIAdminStudio() {
           ))}
         </nav>
 
-        <div className="px-4 py-4 border-t border-white/5 space-y-2">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-white/25 px-1 mb-3">Quick Stats</p>
+        <div className="px-4 py-4 border-t border-border space-y-2">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/50 px-1 mb-3">Quick Stats</p>
           {[
             { label: 'Signed-in Users', value: loading ? '—' : signedInUsers.length },
             { label: 'Total Credits', value: loading ? '—' : totalCredits },
             { label: 'Admin Accounts', value: loading ? '—' : allAdmins.length },
           ].map(({ label, value }) => (
             <div key={label} className="flex items-center justify-between px-2">
-              <span className="text-[11px] text-white/35">{label}</span>
-              <span className="text-xs font-semibold text-white/70">{value}</span>
+              <span className="text-[11px] font-semibold text-foreground/60">{label}</span>
+              <span className="text-xs font-bold text-foreground">{value}</span>
             </div>
           ))}
         </div>
 
-        <div className="px-4 pb-5 pt-4 border-t border-white/5 space-y-1">
+        <div className="px-4 pb-5 pt-4 border-t border-border space-y-1">
           <div className="flex items-center gap-2.5 px-2 py-2 mb-2">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center text-xs font-bold flex-shrink-0">
+            <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-cyan-500 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
               {displayName.charAt(0)}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-medium text-white truncate">{displayName}</p>
-              <p className="text-[10px] text-white/35 truncate">Super Admin</p>
+              <p className="text-sm font-bold text-foreground truncate">{displayName}</p>
+              <p className="text-[10px] font-semibold text-foreground/50 truncate">Super Admin</p>
             </div>
           </div>
-          <motion.button whileHover={{ x: 3 }} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-white/40 hover:text-white hover:bg-white/5 transition-all">
+          <motion.button whileHover={{ x: 3 }} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-all">
             <Settings className="w-4 h-4" /> Settings
           </motion.button>
-          <motion.button whileHover={{ x: 3 }} onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-red-400/60 hover:text-red-400 hover:bg-red-500/10 transition-all">
+          <motion.button whileHover={{ x: 3 }} onClick={toggle}
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-all">
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          </motion.button>
+          <motion.button whileHover={{ x: 3 }} onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-semibold text-red-500/70 hover:text-red-500 hover:bg-red-500/10 transition-all">
             <LogOut className="w-4 h-4" /> Log out
           </motion.button>
         </div>
@@ -247,31 +255,41 @@ export default function AIAdminStudio() {
 
       {/* ── MAIN ── */}
       <div className="flex-1 flex flex-col overflow-y-auto min-w-0">
-        <header className="sticky top-0 z-20 flex items-center justify-between px-4 py-4 md:px-8 border-b border-white/5 bg-[#050505]/90 backdrop-blur-md">
+        <header className="sticky top-0 z-20 flex items-center justify-between px-4 py-4 md:px-8 border-b border-border bg-background/90 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <button
-              className="lg:hidden text-white/50 hover:text-white transition-colors"
+              className="lg:hidden text-foreground/50 hover:text-foreground transition-colors"
               onClick={() => setSidebarOpen(true)}
             >
               <Menu className="w-5 h-5" />
             </button>
             <div>
-              <h2 className="text-base font-semibold text-white">
+              <h2 className="text-base font-bold text-foreground">
                 {activeSection === 'overview' && 'Dashboard Overview'}
                 {activeSection === 'users' && 'User Management'}
                 {activeSection === 'roles' && 'Admins & Roles'}
               </h2>
-              <p className="text-xs text-white/30 mt-0.5">
+              <p className="text-xs font-medium text-foreground/50 mt-0.5">
                 {loading ? 'Fetching data…' : `${signedInUsers.length} signed-in users · last updated just now`}
               </p>
             </div>
           </div>
-          <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-            onClick={fetchUsers} disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-sm text-white/60 hover:text-white hover:bg-white/10 transition-all disabled:opacity-50">
-            <RefreshCw className={cn('w-4 h-4', loading && 'animate-spin')} />
-            Refresh
-          </motion.button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggle}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              className="flex items-center justify-center w-9 h-9 rounded-xl border border-border bg-foreground/5 text-foreground/60 hover:text-foreground hover:bg-foreground/10 transition-all"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+              onClick={fetchUsers} disabled={loading}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border bg-foreground/5 text-sm font-semibold text-foreground/60 hover:text-foreground hover:bg-foreground/10 transition-all disabled:opacity-50">
+              <RefreshCw className={cn('w-4 h-4', loading && 'animate-spin')} />
+              Refresh
+            </motion.button>
+          </div>
         </header>
 
         {/* Toast */}
@@ -291,12 +309,12 @@ export default function AIAdminStudio() {
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
             {STAT_COLS.map(({ label, key, Icon, color, bg, border }) => (
               <motion.div key={key} whileHover={{ scale: 1.02 }}
-                className={cn('rounded-2xl border bg-white/[0.025] p-5 flex items-start justify-between', border)}>
+                className={cn('rounded-2xl border bg-card p-5 flex items-start justify-between shadow-sm', border)}>
                 <div>
-                  <p className="text-xs text-white/35 font-medium mb-1">{label}</p>
+                  <p className="text-xs font-bold text-foreground/60 mb-1 uppercase tracking-wide">{label}</p>
                   {loading
-                    ? <div className="h-9 w-14 rounded-lg bg-white/5 animate-pulse mt-1" />
-                    : <p className="text-4xl font-bold text-white">{stats[key]}</p>}
+                    ? <div className="h-9 w-14 rounded-lg bg-foreground/5 animate-pulse mt-1" />
+                    : <p className="text-4xl font-bold text-foreground">{stats[key]}</p>}
                 </div>
                 <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0', bg)}>
                   <Icon className={cn('w-5 h-5', color)} />
@@ -315,15 +333,15 @@ export default function AIAdminStudio() {
           )}
 
           {/* User Table */}
-          <div className="rounded-2xl border border-white/8 bg-white/[0.025] overflow-hidden">
-            <div className="px-6 py-4 border-b border-white/5 flex items-center justify-between">
+          <div className="rounded-2xl border border-border bg-card overflow-hidden shadow-sm">
+            <div className="px-6 py-4 border-b border-border flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 {activeSection === 'roles'
-                  ? <UserCog className="w-4 h-4 text-amber-400" />
-                  : <Users className="w-4 h-4 text-cyan-400" />}
-                <h2 className="text-sm font-semibold text-white">
+                  ? <UserCog className="w-4 h-4 text-amber-500" />
+                  : <Users className="w-4 h-4 text-cyan-500" />}
+                <h2 className="text-sm font-bold text-foreground">
                   {activeSection === 'roles' ? 'Admin & Role Management' : 'Signed-in Users'}
-                  {!loading && <span className="ml-2 text-xs text-white/30 font-normal">{tableRows.length} accounts</span>}
+                  {!loading && <span className="ml-2 text-xs text-foreground/50 font-semibold">{tableRows.length} accounts</span>}
                 </h2>
               </div>
               <div className="flex items-center gap-2">
@@ -335,63 +353,63 @@ export default function AIAdminStudio() {
             <div className="overflow-x-auto">
               <table className="w-full text-sm" style={{ minWidth: '1100px' }}>
                 <thead>
-                  <tr className="border-b border-white/5 bg-white/[0.015]">
+                  <tr className="border-b border-border bg-foreground/[0.02]">
                     {['', 'UID', 'Display Name', 'Email', 'Phone', 'Auth Providers', 'Provider Type', 'Credits', 'Role', 'Created At', 'Last Sign In', 'Actions'].map((h, i) => (
-                      <th key={i} className="px-4 py-3 text-left text-[10px] font-semibold text-white/30 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                      <th key={i} className="px-4 py-3 text-left text-[10px] font-bold text-foreground/50 uppercase tracking-wider whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {loading ? (
                     Array.from({ length: 5 }).map((_, i) => (
-                      <tr key={i} className="border-b border-white/5">
+                      <tr key={i} className="border-b border-border">
                         {Array.from({ length: 12 }).map((__, j) => (
                           <td key={j} className="px-4 py-4">
-                            <div className="h-3.5 rounded-md bg-white/5 animate-pulse" style={{ width: `${35 + (j * 19) % 55}%` }} />
+                            <div className="h-3.5 rounded-md bg-foreground/5 animate-pulse" style={{ width: `${35 + (j * 19) % 55}%` }} />
                           </td>
                         ))}
                       </tr>
                     ))
                   ) : tableRows.length === 0 ? (
-                    <tr><td colSpan={12} className="px-6 py-16 text-center text-white/25 text-sm">No users found.</td></tr>
+                    <tr><td colSpan={12} className="px-6 py-16 text-center text-foreground/40 font-semibold text-sm">No users found.</td></tr>
                   ) : tableRows.map((u, idx) => {
                     const isEditingThis = editingId === u.id;
                     return (
                       <motion.tr key={u.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.02 }}
-                        className="border-b border-white/5 hover:bg-white/[0.025] transition-colors group">
+                        className="border-b border-border hover:bg-foreground/[0.03] transition-colors group">
 
                         {/* Avatar */}
                         <td className="px-4 py-3.5">
                           {u.avatar_url
                             ? <img src={u.avatar_url} alt="" className="w-8 h-8 rounded-full border border-white/10 object-cover" />
-                            : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500/50 to-cyan-500/50 flex items-center justify-center text-xs font-bold text-white/80">
+                            : <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500/50 to-cyan-500/50 flex items-center justify-center text-xs font-bold text-foreground">
                                 {(u.display_name !== '-' ? u.display_name : u.email).charAt(0).toUpperCase()}
                               </div>}
                         </td>
 
                         {/* UID */}
                         <td className="px-4 py-3.5">
-                          <span className="font-mono text-[10px] text-white/30 select-all cursor-copy hover:text-white/50 transition-colors" title={u.id}>
+                          <span className="font-mono text-[10px] font-semibold text-foreground/40 select-all cursor-copy hover:text-foreground/70 transition-colors" title={u.id}>
                             {shortId(u.id)}
                           </span>
                         </td>
 
                         {/* Display Name */}
-                        <td className="px-4 py-3.5 font-medium text-white whitespace-nowrap">
-                          {u.display_name !== '-' ? u.display_name : <span className="text-white/20">—</span>}
+                        <td className="px-4 py-3.5 font-bold text-foreground whitespace-nowrap">
+                          {u.display_name !== '-' ? u.display_name : <span className="text-foreground/30">—</span>}
                         </td>
 
                         {/* Email */}
-                        <td className="px-4 py-3.5 text-white/50 max-w-[180px] truncate">
-                          {u.email || <span className="text-white/20">—</span>}
+                        <td className="px-4 py-3.5 font-semibold text-foreground/70 max-w-[180px] truncate">
+                          {u.email || <span className="text-foreground/30">—</span>}
                         </td>
 
                         {/* Phone */}
-                        <td className="px-4 py-3.5 text-white/40 whitespace-nowrap">
+                        <td className="px-4 py-3.5 font-semibold text-foreground/60 whitespace-nowrap">
                           {u.phone !== '-'
-                            ? <span className="flex items-center gap-1"><Phone className="w-3 h-3 text-white/25" />{u.phone}</span>
-                            : <span className="text-white/20">—</span>}
+                            ? <span className="flex items-center gap-1"><Phone className="w-3 h-3 text-foreground/40" />{u.phone}</span>
+                            : <span className="text-foreground/30">—</span>}
                         </td>
 
                         {/* Auth Providers */}
@@ -399,12 +417,12 @@ export default function AIAdminStudio() {
                           <div className="flex items-center gap-1 flex-wrap">
                             {u.providers.length
                               ? u.providers.map((p) => <ProviderBadge key={p} provider={p} />)
-                              : <span className="text-white/20 text-xs">—</span>}
+                              : <span className="text-foreground/30 text-xs font-semibold">—</span>}
                           </div>
                         </td>
 
                         {/* Provider Type */}
-                        <td className="px-4 py-3.5 text-white/35 text-xs">{u.provider_type}</td>
+                        <td className="px-4 py-3.5 font-semibold text-foreground/60 text-xs">{u.provider_type}</td>
 
                         {/* Credits — editable */}
                         <td className="px-4 py-3.5">
@@ -412,22 +430,22 @@ export default function AIAdminStudio() {
                             <div className="flex items-center gap-1.5">
                               <input type="number" value={editingCredit}
                                 onChange={(e) => setEditingCredit(Number(e.target.value))}
-                                className="w-20 px-2 py-1.5 rounded-lg bg-white/10 border border-cyan-500/40 text-white text-xs outline-none focus:border-cyan-400"
+                                className="w-20 px-2 py-1.5 rounded-lg bg-background border border-cyan-500/40 text-foreground text-xs outline-none focus:border-cyan-500"
                                 autoFocus />
                               <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleSaveCredit(u.id)} disabled={saving}
                                 className="p-1.5 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 disabled:opacity-50" title="Save">
                                 {saving ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
                               </motion.button>
                               <motion.button whileTap={{ scale: 0.9 }} onClick={cancelEdit}
-                                className="p-1.5 rounded-lg bg-white/5 text-white/40 hover:bg-white/10" title="Cancel">
+                                className="p-1.5 rounded-lg bg-foreground/5 text-foreground/40 hover:bg-foreground/10" title="Cancel">
                                 <X className="w-3 h-3" />
                               </motion.button>
                             </div>
                           ) : (
                             <button onClick={() => startEditCredits(u)} className="flex items-center gap-1.5 group/c" title="Click to edit credits">
-                              <span className="font-semibold text-cyan-300">{u.credit_balance}</span>
+                              <span className="font-bold text-cyan-600 dark:text-cyan-300">{u.credit_balance}</span>
                               <Zap className="w-3 h-3 text-yellow-400" />
-                              <Edit2 className="w-2.5 h-2.5 text-white/20 opacity-0 group-hover/c:opacity-100 transition-opacity" />
+                              <Edit2 className="w-2.5 h-2.5 text-foreground/30 opacity-0 group-hover/c:opacity-100 transition-opacity" />
                             </button>
                           )}
                         </td>
@@ -437,7 +455,7 @@ export default function AIAdminStudio() {
                           {isEditingThis && editField === 'role' ? (
                             <div className="flex items-center gap-1.5">
                               <select value={editingRole} onChange={(e) => setEditingRole(e.target.value as 'user' | 'admin')}
-                                className="px-2 py-1.5 rounded-lg bg-[#0d0d0d] border border-amber-500/40 text-white text-xs outline-none focus:border-amber-400"
+                                className="px-2 py-1.5 rounded-lg bg-background border border-amber-500/40 text-foreground text-xs outline-none focus:border-amber-500"
                                 autoFocus>
                                 <option value="user">user</option>
                                 <option value="admin">admin</option>
@@ -447,42 +465,42 @@ export default function AIAdminStudio() {
                                 {saving ? <RefreshCw className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
                               </motion.button>
                               <motion.button whileTap={{ scale: 0.9 }} onClick={cancelEdit}
-                                className="p-1.5 rounded-lg bg-white/5 text-white/40 hover:bg-white/10" title="Cancel">
+                                className="p-1.5 rounded-lg bg-foreground/5 text-foreground/40 hover:bg-foreground/10" title="Cancel">
                                 <X className="w-3 h-3" />
                               </motion.button>
                             </div>
                           ) : (
                             <button onClick={() => startEditRole(u)} className="group/r flex items-center gap-1.5" title="Click to edit role">
-                              <span className={cn('px-2.5 py-0.5 rounded-full text-[11px] font-medium transition-colors',
+                              <span className={cn('px-2.5 py-0.5 rounded-full text-[11px] font-semibold transition-colors',
                                 u.role === 'admin'
-                                  ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
-                                  : 'bg-white/8 text-white/40 border border-white/10')}>
+                                  ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/20'
+                                  : 'bg-foreground/8 text-foreground/60 border border-border')}>
                                 {u.role}
                               </span>
-                              <Edit2 className="w-2.5 h-2.5 text-white/20 opacity-0 group-hover/r:opacity-100 transition-opacity" />
+                              <Edit2 className="w-2.5 h-2.5 text-foreground/30 opacity-0 group-hover/r:opacity-100 transition-opacity" />
                             </button>
                           )}
                         </td>
 
                         {/* Created At */}
-                        <td className="px-4 py-3.5 text-white/30 text-xs whitespace-nowrap">
+                        <td className="px-4 py-3.5 font-semibold text-foreground/50 text-xs whitespace-nowrap">
                           <span className="flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-white/20" />{fmt(u.created_at)}
+                            <Clock className="w-3 h-3 text-foreground/30" />{fmt(u.created_at)}
                           </span>
                         </td>
 
                         {/* Last Sign In */}
-                        <td className="px-4 py-3.5 text-white/30 text-xs whitespace-nowrap">
+                        <td className="px-4 py-3.5 font-semibold text-xs whitespace-nowrap">
                           {u.last_sign_in_at
-                            ? <span className="text-emerald-400/70">{fmt(u.last_sign_in_at)}</span>
-                            : <span className="text-white/20">Never</span>}
+                            ? <span className="text-emerald-600 dark:text-emerald-400">{fmt(u.last_sign_in_at)}</span>
+                            : <span className="text-foreground/30">Never</span>}
                         </td>
 
                         {/* Delete */}
                         <td className="px-4 py-3.5">
                           <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                             onClick={() => handleDelete(u.id)} disabled={deletingId === u.id}
-                            className="p-2 rounded-lg text-white/20 hover:text-red-400 hover:bg-red-500/10 transition-all disabled:opacity-40" title="Delete user">
+                            className="p-2 rounded-lg text-foreground/30 hover:text-red-500 hover:bg-red-500/10 transition-all disabled:opacity-40" title="Delete user">
                             {deletingId === u.id ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
                           </motion.button>
                         </td>
@@ -495,8 +513,8 @@ export default function AIAdminStudio() {
 
             {!loading && tableRows.length > 0 && (
               <div className="px-6 py-3 border-t border-white/5 flex items-center justify-between">
-                <p className="text-xs text-white/25">Showing {tableRows.length} of {users.length} total accounts</p>
-                <p className="text-xs text-white/25 flex items-center gap-1">
+                <p className="text-xs font-semibold text-foreground/50">Showing {tableRows.length} of {users.length} total accounts</p>
+                <p className="text-xs font-semibold text-foreground/50 flex items-center gap-1">
                   Click <Edit2 className="inline w-2.5 h-2.5 mx-0.5" /> on Credits or Role to edit inline
                 </p>
               </div>

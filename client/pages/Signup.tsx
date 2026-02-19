@@ -92,7 +92,7 @@ export default function Signup() {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       {/* ── Mobile-only top logo bar ── */}
-      <div className="flex lg:hidden items-center gap-2 px-4 py-4 bg-background dark relative z-20">
+      <div className="flex lg:hidden items-center gap-2 px-4 py-4 bg-background relative z-20">
         <img src="/ai-bg.svg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" />
         <Link to="/" className="flex items-center gap-2 font-bold text-lg text-white relative z-10">
           <div className="w-7 h-7 bg-gradient-to-br from-[#00C2FF] to-purple-500 rounded-lg flex items-center justify-center">
@@ -141,7 +141,7 @@ export default function Signup() {
       </div>
 
       {/* ── Right: Auth Form ── */}
-      <div className="flex flex-1 items-center justify-center bg-background dark px-4 py-8 md:px-8 md:py-12 relative overflow-hidden">
+      <div className="flex flex-1 items-center justify-center bg-background px-4 py-8 md:px-8 md:py-12 relative overflow-hidden">
         {/* Website normal background */}
         <img src="/ai-bg.svg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-70 pointer-events-none" />
         <div className="floating-logos pointer-events-none" aria-hidden>
