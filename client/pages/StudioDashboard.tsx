@@ -376,17 +376,19 @@ const SidebarNav = ({
       <div style={{ flex: 1 }} />
       <div style={s.sidebarSection}>
         <div style={s.sidebarSectionLabel}>PERSONAL</div>
-        <div style={s.sidebarUserRow}>
-          {avatarUrl ? (
-            <img src={avatarUrl} alt={displayName} style={s.sidebarAvatarImg} />
-          ) : (
-            <div style={s.sidebarAvatarFallback}>{avatarChar}</div>
-          )}
-          <div style={{ minWidth: 0 }}>
-            <div style={s.sidebarUserName}>{user.full_name || displayName}</div>
-            <div style={s.sidebarUserEmail}>{user.email}</div>
+        <Link to="/studio/profile" style={{ textDecoration: "none", display: "block" }}>
+          <div style={{ ...s.sidebarUserRow, cursor: "pointer" } as React.CSSProperties}>
+            {avatarUrl ? (
+              <img src={avatarUrl} alt={displayName} style={s.sidebarAvatarImg} />
+            ) : (
+              <div style={s.sidebarAvatarFallback}>{avatarChar}</div>
+            )}
+            <div style={{ minWidth: 0 }}>
+              <div style={s.sidebarUserName}>{user.full_name || displayName}</div>
+              <div style={s.sidebarUserEmail}>{user.email}</div>
+            </div>
           </div>
-        </div>
+        </Link>
       </div>
       <div style={s.sidebarSection}>
         <div style={s.sidebarSectionLabel}>WORKSPACE</div>
