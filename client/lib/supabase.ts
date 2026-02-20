@@ -224,6 +224,21 @@ export async function getCurrentUser() {
       profileData.credit_balance = 30;
     }
 
+    // Sync OAuth avatar (Google etc.) into the profile if not already set
+    const metaAvatar =
+      (user.user_metadata as any)?.avatar_url ||
+      (user.user_metadata as any)?.picture ||
+      null;
+    if (profileData && !profileData.avatar_url && metaAvatar) {
+      const { data: updated } = await supabase
+        .from('profiles')
+        .update({ avatar_url: metaAvatar, updated_at: new Date().toISOString() })
+        .eq('id', user.id)
+        .select()
+        .single();
+      if (updated) return { user: updated, error: null };
+    }
+
     return { user: profileData, error: null };
   } catch (error) {
     return { user: null, error: error instanceof Error ? error.message : 'Failed to get user' };

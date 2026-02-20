@@ -13,7 +13,8 @@ export default function Index() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [displayText, setDisplayText] = useState('');
-  const fullText = 'Prompt. Produce. Publish with Narrately AI.';
+  const [typingDone, setTypingDone] = useState(false);
+  const fullText = 'Select. Prompt. Generate with Narrately AI.';
 
   useEffect(() => {
     let i = 0;
@@ -22,6 +23,7 @@ export default function Index() {
         setDisplayText(fullText.slice(0, i + 1));
         i++;
       } else {
+        setTypingDone(true);
         clearInterval(typeInterval);
       }
     }, 50);
@@ -66,7 +68,7 @@ export default function Index() {
       <Header />
 
       {/* Hero Section */}
-      <section className="pt-20 md:pt-0 min-h-screen flex items-center relative overflow-hidden">
+      <section className="pt-24 pb-16 sm:pt-20 sm:pb-0 sm:min-h-screen sm:flex sm:items-center relative overflow-hidden">
         {/* AI background — same as login page */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <img src="/ai-bg.svg" alt="" className="w-full h-full object-cover opacity-70" />
@@ -86,54 +88,78 @@ export default function Index() {
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Column - Content */}
-            <div className="flex flex-col gap-8 animate-fade-in">
+            <div className="flex flex-col gap-5 sm:gap-8 animate-fade-in">
               {/* Main Headline */}
               <div className="flex flex-col gap-4">
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight text-foreground">
-                  <span className="inline-flex flex-wrap gap-1">
-                    {displayText.split(' ').map((word, i) => {
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight text-foreground overflow-hidden">
+                  <span className="inline-flex flex-wrap gap-x-2 gap-y-1">
+                    {(displayText || fullText).split(' ').map((word, i) => {
                       const isNarrataly = word.includes('Narrately');
                       const isAI = word.includes('AI');
                       return (
                         <span
                           key={i}
                           className={
-                            (isNarrataly || isAI) && displayText.includes(word)
+                            (isNarrataly || isAI)
                               ? 'bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent'
                               : ''
                           }
+                          style={{ opacity: displayText ? 1 : 0.4 }}
                         >
                           {word}
                         </span>
                       );
                     })}
-                    {displayText.length < fullText.length && (
+                    {!typingDone && displayText.length < fullText.length && (
                       <span className="ml-1 inline-block w-px bg-primary animate-pulse"></span>
                     )}
                   </span>
                 </h1>
 
-                <p className="text-lg sm:text-xl text-foreground/90 max-w-xl">
-                  Generate AI videos with prompt, image, and voice recognition.
-                  Create stunning content in seconds, not days.
+                <p className="text-base sm:text-lg text-foreground/90 max-w-xl">
+                  Pick a template, choose your video layout, type your prompt — and Narrately writes the script and generates your video automatically.
                 </p>
+
+                {/* How it works — step flow */}
+                <div className="flex overflow-x-auto pb-1 -mx-1 px-1 sm:flex-wrap sm:overflow-x-visible sm:pb-0 items-center gap-2 mt-1">
+                  {[
+                    { step: "1", label: "Choose Template" },
+                    { step: "2", label: "Select Screen" },
+                    { step: "3", label: "Enter Prompt" },
+                    { step: "4", label: "Done ✨" },
+                  ].map((item, i, arr) => (
+                    <div key={item.step} className="flex items-center gap-2 flex-shrink-0">
+                      <div className="flex items-center gap-1.5 bg-card/60 backdrop-blur border border-border/50 rounded-full px-3 py-1.5">
+                        <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">
+                          {item.step}
+                        </span>
+                        <span className="text-sm font-medium text-foreground/85 whitespace-nowrap">{item.label}</span>
+                      </div>
+                      {i < arr.length - 1 && (
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-primary/60 flex-shrink-0">
+                          <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* CTA Section */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-2 sm:pt-4">
                 {/* Email Input and CTA */}
-                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row gap-3 w-full">
                   <input
                     type="email"
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleGetStarted()}
-                    className="px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                    className="w-full sm:w-auto flex-1 min-w-0 px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
                   />
                   <Button
                     onClick={handleGetStarted}
-                    className="bg-primary hover:bg-primary/90 text-white font-semibold flex items-center gap-2 whitespace-nowrap"
+                    className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-white font-semibold flex items-center justify-center gap-2 whitespace-nowrap"
                     size="lg"
                   >
                     Get Started Free
@@ -143,11 +169,11 @@ export default function Index() {
               </div>
 
               {/* Secondary CTA */}
-              <div className="pt-4 border-t border-border/20">
+              <div className="pt-2 sm:pt-4 border-t border-border/20">
                 <Button
                   onClick={handleGoogleSignUp}
                   variant="outline"
-                  className="w-full sm:w-auto border-border hover:bg-card"
+                  className="w-full sm:w-auto border-border hover:bg-card flex items-center justify-center"
                   size="lg"
                 >
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -173,7 +199,7 @@ export default function Index() {
               </div>
 
               {/* Trust Indicators */}
-              <div className="pt-4 flex items-center gap-4 text-sm text-foreground/85">
+              <div className="pt-2 sm:pt-4 flex items-center gap-4 text-sm text-foreground/85">
                 <div className="flex -space-x-2">
                   {[1, 2, 3].map((i) => (
                     <div
@@ -190,7 +216,7 @@ export default function Index() {
             </div>
 
             {/* Right Column - 3D Visual */}
-            <div className="flex h-[520px] sm:h-[600px] lg:h-screen relative">
+            <div className="hidden sm:flex h-[420px] lg:h-screen relative">
               <div className="w-full h-full flex items-center justify-center">
                 <Hero3D />
               </div>

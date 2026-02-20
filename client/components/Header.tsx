@@ -112,33 +112,33 @@ export function Header() {
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                className="flex items-center gap-3"
+                className="flex items-center gap-2 sm:gap-3"
               >
-                {/* Trial badge */}
+                {/* Trial badge — desktop only */}
                 {onTrial && (
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-white/15 text-xs font-medium text-[#00C2FF]">
+                  <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-white/15 text-xs font-medium text-[#00C2FF]">
                     <Flame className="w-3 h-3 text-[#00C2FF]" />
                     {trialDaysRemaining}d left
                   </div>
                 )}
 
-                {/* Credits badge */}
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-white/15 text-xs font-semibold text-white">
+                {/* Credits badge — desktop only */}
+                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-white/15 text-xs font-semibold text-white">
                   <Zap className="w-3.5 h-3.5 text-[#4ade80]" />
                   {user!.credit_balance} Credits
                 </div>
 
-                {/* Dashboard button */}
-                <Link to="/studio">
+                {/* Dashboard button — desktop only */}
+                <Link to="/studio" className="hidden sm:block">
                   <button className="px-4 py-1.5 rounded-lg bg-[#1a1a1a] border border-white/25 text-white text-sm font-medium hover:bg-[#252525] transition-colors">
                     Dashboard
                   </button>
                 </Link>
 
-                {/* Sign Out button */}
+                {/* Sign Out button — desktop only */}
                 <button
                   onClick={handleSignOut}
-                  className="px-4 py-1.5 rounded-lg text-white/80 text-sm font-medium hover:text-white transition-colors"
+                  className="hidden sm:block px-4 py-1.5 rounded-lg text-white/80 text-sm font-medium hover:text-white transition-colors"
                 >
                   Sign Out
                 </button>

@@ -126,9 +126,7 @@ export default function Login() {
       <div className="flex lg:hidden items-center gap-2 px-4 py-4 bg-background relative z-20">
         <img src="/ai-bg.svg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" />
         <Link to="/" className="flex items-center gap-2 font-bold text-lg text-white relative z-10">
-          <div className="w-7 h-7 bg-gradient-to-br from-[#00C2FF] to-purple-500 rounded-lg flex items-center justify-center">
-            <span className="text-white font-black text-sm">N</span>
-          </div>
+          <img src="/narrately-logo.svg" alt="Narrately" className="w-7 h-7" />
           <span>Narrately</span>
         </Link>
       </div>
@@ -148,9 +146,7 @@ export default function Login() {
         <div className="login-panel-text relative z-10 flex flex-col justify-between h-full p-6 lg:p-10">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 font-bold text-xl !text-white hover:text-[#00C2FF] transition-colors">
-            <div className="w-8 h-8 bg-gradient-to-br from-[#00C2FF] to-purple-500 rounded-lg flex items-center justify-center">
-              <span className="!text-white font-black">N</span>
-            </div>
+            <img src="/narrately-logo.svg" alt="Narrately" className="w-8 h-8" />
             <span className="!text-white">Narrately</span>
           </Link>
 
@@ -187,9 +183,7 @@ export default function Login() {
         <div className="w-full max-w-sm relative z-10">
           {/* Brand icon – hidden on mobile since top bar shows logo */}
           <div className="hidden lg:flex justify-center mb-5">
-            <div className="w-12 h-12 rounded-2xl bg-blue-500 flex items-center justify-center shadow-md">
-              <img src="/narrately-logo.svg" alt="Narrately" className="w-7 h-7" />
-            </div>
+            <img src="/narrately-logo.svg" alt="Narrately" className="w-12 h-12" />
           </div>
 
           <p className="text-center text-sm text-foreground/60 mb-1">Welcome to Narrately AI</p>

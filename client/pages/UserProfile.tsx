@@ -284,7 +284,10 @@ export default function UserProfile() {
 
         {/* Bottom actions */}
         <div className="px-3 py-4 border-t border-border flex flex-col gap-0.5">
-          <button className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors font-medium">
+          <button
+            onClick={() => navigate('/pricing')}
+            className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors font-medium"
+          >
             <Zap className="w-4 h-4 text-[#00C2FF]" />
             Upgrade Plan
           </button>

@@ -26,6 +26,7 @@ import Onboarding from './pages/Onboarding';
 import StudioDashboard from './pages/StudioDashboard';
 import AIAdminStudio from './pages/AIAdminStudio';
 import UserProfile from './pages/UserProfile';
+import UserDashboard from './pages/UserDashboard';
 import NotFound from "./pages/NotFound";
 import { AIAgentHelper } from "./components/AIAgentHelper";
 
