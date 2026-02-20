@@ -109,6 +109,18 @@
     @apply bg-background text-foreground;
   }
 
+  /* Force white text inside the login left-panel content */
+  .login-panel-text,
+  .login-panel-text h1,
+  .login-panel-text h2,
+  .login-panel-text h3,
+  .login-panel-text p,
+  .login-panel-text li,
+  .login-panel-text span,
+  .login-panel-text a {
+    color: #ffffff !important;
+  }
+
   :where(p, span, li, h1, h2, h3, h4, h5, h6, a, button, label, td, th) {
     overflow-wrap: anywhere;
     word-break: break-word;

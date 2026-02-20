@@ -27,6 +27,19 @@ export const handleGetAdminUsers: RequestHandler = async (_req, res) => {
       .select('id, full_name, role, credit_balance, avatar_url, trial_ends_at');
     if (profilesError) throw profilesError;
 
+    // Try to fetch avatar_group_id separately (column may not exist yet)
+    let avatarGroupMap = new Map<string, string | null>();
+    try {
+      const { data: agData } = await supabase
+        .from('profiles')
+        .select('id, avatar_group_id');
+      if (agData) {
+        agData.forEach((row: any) => avatarGroupMap.set(row.id, row.avatar_group_id ?? null));
+      }
+    } catch (_) {
+      // column doesn't exist yet — all users will show as inactive until column is added
+    }
+
     const profileMap = new Map((profiles || []).map((p) => [p.id, p]));
 
     const users = (authData?.users || []).map((u) => {
@@ -44,6 +57,7 @@ export const handleGetAdminUsers: RequestHandler = async (_req, res) => {
         phone: u.phone || '-',
         display_name: profile?.full_name || (u.user_metadata as any)?.full_name || (u.user_metadata as any)?.name || '-',
         avatar_url: profile?.avatar_url || (u.user_metadata as any)?.avatar_url || null,
+        avatar_group_id: avatarGroupMap.get(u.id) ?? null,
         providers,
         provider_type: providerType,
         role: profile?.role || 'user',

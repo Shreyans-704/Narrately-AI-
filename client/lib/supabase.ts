@@ -246,6 +246,35 @@ export async function updateUserProfile(userId: string, updates: Partial<any>) {
   }
 }
 
+export async function uploadAvatar(userId: string, file: File) {
+  try {
+    const ext = file.name.split('.').pop() ?? 'jpg';
+    const path = `${userId}/avatar.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(path, file, { upsert: true, contentType: file.type });
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+
+    // Update profile with avatar_url
+    const { data: profile, error: updateError } = await supabase
+      .from('profiles')
+      .update({ avatar_url: data.publicUrl, updated_at: new Date().toISOString() })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (updateError) throw updateError;
+
+    return { url: data.publicUrl, user: profile, error: null };
+  } catch (error) {
+    return { url: null, user: null, error: error instanceof Error ? error.message : 'Avatar upload failed' };
+  }
+}
+
 export async function deductCredits(userId: string, amount: number = 1) {
   try {
     // Get current balance

@@ -25,6 +25,7 @@ import Signup from "./pages/Signup";
 import Onboarding from './pages/Onboarding';
 import StudioDashboard from './pages/StudioDashboard';
 import AIAdminStudio from './pages/AIAdminStudio';
+import UserProfile from './pages/UserProfile';
 import NotFound from "./pages/NotFound";
 import { AIAgentHelper } from "./components/AIAgentHelper";
 
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/signup" element={<Signup />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/studio" element={<StudioDashboard />} />
+          <Route path="/studio/profile" element={<UserProfile />} />
           <Route path="/admin-portal" element={<AIAdminStudio />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

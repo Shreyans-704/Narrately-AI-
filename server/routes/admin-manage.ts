@@ -82,3 +82,30 @@ export const handleDeleteUser: RequestHandler = async (req, res) => {
     res.status(500).json({ error: err.message || 'Failed to delete user' });
   }
 };
+
+// PATCH /api/admin/users/:id/avatar-group — assign or remove avatar group
+export const handleUpdateAvatarGroup: RequestHandler = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { avatar_group_id } = req.body as { avatar_group_id: string | null };
+
+    const supabase = getAdminClient();
+
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        avatar_group_id: avatar_group_id || null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    res.json({ user: data });
+  } catch (err: any) {
+    console.error('[update-avatar-group]', err);
+    res.status(500).json({ error: err.message || 'Failed to update avatar group' });
+  }
+};

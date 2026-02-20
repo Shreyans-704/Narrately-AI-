@@ -134,7 +134,7 @@ export default function Login() {
       </div>
 
       {/* ── Left: Marketing Sidebar ── */}
-      <div className="hidden lg:flex lg:w-1/2 relative flex-col">
+      <div className="hidden lg:flex lg:w-1/2 relative flex-col bg-gray-900">
         {/* Background image */}
         <img
           src="/Gemini_Generated_Image_qdv6alqdv6alqdv6.png"
@@ -142,26 +142,26 @@ export default function Login() {
           className="absolute inset-0 w-full h-full object-cover"
         />
         {/* Dark gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-blue-950/70 to-black/80" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/90 via-blue-950/85 to-black/90" />
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col justify-between h-full p-6 lg:p-10">
+        <div className="login-panel-text relative z-10 flex flex-col justify-between h-full p-6 lg:p-10">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl text-white hover:text-[#00C2FF] transition-colors">
+          <Link to="/" className="flex items-center gap-2 font-bold text-xl !text-white hover:text-[#00C2FF] transition-colors">
             <div className="w-8 h-8 bg-gradient-to-br from-[#00C2FF] to-purple-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-black">N</span>
+              <span className="!text-white font-black">N</span>
             </div>
-            <span>Narrately</span>
+            <span className="!text-white">Narrately</span>
           </Link>
 
           {/* Bottom copy */}
           <div>
-            <h2 className="text-white font-bold text-2xl lg:text-3xl leading-tight mb-6">
+            <h2 className="!text-white font-bold text-2xl lg:text-3xl leading-tight mb-6" style={{color:'#ffffff'}}>
               Join Millions of Creators that Trust Narrately AI to Supercharge Their Stories
             </h2>
             <ul className="space-y-3">
               {features.map((f) => (
-                <li key={f} className="flex items-center gap-3 text-white/90 text-sm">
+                <li key={f} className="flex items-center gap-3 text-sm !text-white" style={{color:'#ffffff'}}>
                   <CheckCircle2 className="w-5 h-5 text-blue-400 shrink-0" />
                   {f}
                 </li>

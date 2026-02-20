@@ -20,9 +20,12 @@ import {
   History,
   Menu,
   X,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { signOut } from '@/lib/supabase';
+import { useTheme } from '@/hooks/useTheme';
 
 const navItems = [
   { icon: Home, label: 'Home', active: true },
@@ -47,6 +50,7 @@ export default function StudioDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const displayName = user?.email?.split('@')[0] ?? 'Shreyans';
+  const { theme, toggle } = useTheme();
 
   const handleLogout = async () => {
     await signOut();
@@ -115,16 +119,20 @@ export default function StudioDashboard() {
         {/* Personal */}
         <div className="px-4 py-2">
           <p className="text-foreground/40 text-[10px] uppercase tracking-widest mb-2 px-1">Personal</p>
-          <button className="w-full flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-foreground/5 transition-colors group">
+          <button
+            onClick={() => navigate('/studio/profile')}
+            className="w-full flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-foreground/5 transition-colors group"
+          >
             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#00C2FF] to-purple-500 flex items-center justify-center flex-shrink-0">
               <span className="text-white text-xs font-bold">
                 {displayName.charAt(0).toUpperCase()}
               </span>
             </div>
-            <div className="text-left min-w-0">
+            <div className="text-left min-w-0 flex-1">
               <p className="text-foreground text-xs font-semibold truncate">{displayName}</p>
               <p className="text-foreground/40 text-[10px] truncate">{user?.email ?? 'shreyans@narrately.ai'}</p>
             </div>
+            <ChevronRight className="w-3 h-3 text-foreground/30 group-hover:text-foreground/50 transition-colors flex-shrink-0" />
           </button>
         </div>
 
@@ -179,6 +187,13 @@ export default function StudioDashboard() {
           </button>
           <div className="hidden lg:block" />
           <div className="flex items-center gap-3">
+            <button
+              onClick={toggle}
+              className="w-8 h-8 rounded-lg bg-foreground/[0.07] hover:bg-foreground/[0.12] flex items-center justify-center text-foreground/60 hover:text-foreground transition-all"
+              title="Toggle theme"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
             <button className="relative text-foreground/50 hover:text-foreground transition-colors">
               <Bell className="w-5 h-5" />
               <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#00C2FF]" />

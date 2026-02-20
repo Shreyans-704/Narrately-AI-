@@ -11,12 +11,16 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   email text UNIQUE NOT NULL,
   full_name text,
   avatar_url text,
+  avatar_group_id text DEFAULT NULL,
   role text DEFAULT 'user',
   credit_balance integer DEFAULT 30,
   trial_ends_at timestamptz,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );
+
+-- Add avatar_group_id to existing tables that were created before this column was added
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS avatar_group_id text DEFAULT NULL;
 
 -- Helpful index
 CREATE INDEX IF NOT EXISTS profiles_email_idx ON public.profiles (email);
