@@ -195,13 +195,9 @@ const SubscriptionWidget = ({ isMobile, creditBalance, trialEndsAt }: { isMobile
   const [expanded, setExpanded] = useState(!isMobile);
   const totalCredits = 30;
   const usedCredits = Math.max(0, totalCredits - creditBalance);
-  const paygTotal = creditBalance;
-  const paygUsed = 0;
 
   const monthlyRemaining = creditBalance;
-  const paygRemaining = paygTotal - paygUsed;
   const monthlyPercent = (usedCredits / totalCredits) * 100;
-  const paygPercent = paygTotal > 0 ? (paygUsed / paygTotal) * 100 : 0;
   const lowQuotaWarning = monthlyPercent >= 80;
 
   // Use real trial_ends_at from Supabase; fall back to 1 month from now if null
@@ -249,16 +245,8 @@ const SubscriptionWidget = ({ isMobile, creditBalance, trialEndsAt }: { isMobile
                 <div style={s.warningBox}><AlertCircleIcon /><span>Running low on credits</span></div>
               )}
             </div>
-            <div style={s.paygBoxMobile}>
-              <div style={s.paygHeader}>
-                <div style={s.paygName}><ZapIcon /> PAYG Balance: {paygRemaining} videos</div>
-              </div>
-              <div style={s.progressBar}>
-                <div style={{ ...s.progressFill, width: `${paygPercent}%`, background: "#10b981" }} />
-              </div>
-            </div>
             <div style={s.subActionsMobile}>
-              <button style={s.btnPrimaryMobile}><PlusIcon /> Buy More Credits</button>
+              <Link to="/pricing" style={{ ...s.btnPrimaryMobile, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}><PlusIcon /> Buy More Credits</Link>
             </div>
           </div>
         )}
@@ -312,26 +300,9 @@ const SubscriptionWidget = ({ isMobile, creditBalance, trialEndsAt }: { isMobile
         )}
       </div>
 
-      <div style={s.paygBox}>
-        <div style={s.paygHeader}>
-          <div style={s.paygName}><ZapIcon /> Pay As You Go Balance</div>
-        </div>
-        <div style={s.quotaRow}>
-          <div style={s.quotaLabel}>Videos Used</div>
-          <div style={s.quotaValue}>
-            <span style={s.quotaUsed}>{paygUsed}</span>
-            <span style={s.quotaTotal}>/ {paygTotal}</span>
-          </div>
-        </div>
-        <div style={s.progressBar}>
-          <div style={{ ...s.progressFill, width: `${paygPercent}%`, background: "#10b981" }} />
-        </div>
-        <div style={s.paygNote}>{paygRemaining} videos remaining · No expiry date</div>
-      </div>
-
       <div style={s.subActions}>
-        <button style={s.btnPrimary}><PlusIcon /> Buy More Credits</button>
-        <button style={s.btnSecondary}>View All Plans <ArrowRightIcon /></button>
+        <Link to="/pricing" style={{ ...s.btnPrimary, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}><PlusIcon /> Buy More Credits</Link>
+        <Link to="/pricing" style={{ ...s.btnSecondary, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>View All Plans <ArrowRightIcon /></Link>
       </div>
     </div>
   );
@@ -509,11 +480,18 @@ export default function StudioDashboard() {
   const avatarChar = (user.full_name?.[0] || user.email?.[0] || "U").toUpperCase();
   const avatarUrl = (user as any).avatar_url as string | null | undefined;
   const creditBalance = user.credit_balance ?? 30;
+  const totalViews = (user as any).total_views as number ?? 0;
+
+  const formatViews = (n: number): string => {
+    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+    if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+    return String(n);
+  };
 
   const stats = [
     { label: "Credits Remaining", value: String(creditBalance), change: "of 30", trend: "up", icon: <VideoIcon /> },
     { label: "This Month", value: String(Math.max(0, 30 - creditBalance)), change: "videos made", trend: "up", icon: <CalendarIcon /> },
-    { label: "Total Views", value: "24.8K", change: "+18%", trend: "up", icon: <TrendingUpIcon /> },
+    { label: "Total Views", value: formatViews(totalViews), change: "all time", trend: "up", icon: <TrendingUpIcon /> },
   ];
 
   return (

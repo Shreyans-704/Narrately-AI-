@@ -5,27 +5,27 @@ import { ArrowRight, X, ZoomIn } from 'lucide-react';
 const avatars = [
   {
     id: 1,
-    name: 'Emma',
-    src: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&q=80&fit=crop&crop=face',
-    preview: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=900&q=90&fit=crop&crop=top',
+    name: 'Alex — Executive',
+    src: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80&fit=crop&crop=face',
+    preview: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=900&q=90&fit=crop&crop=top',
   },
   {
     id: 2,
-    name: 'James',
-    src: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&q=80&fit=crop&crop=face',
-    preview: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&q=90&fit=crop&crop=top',
+    name: 'Dr. Sara — Podcast',
+    src: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&q=80&fit=crop&crop=face',
+    preview: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=900&q=90&fit=crop&crop=top',
   },
   {
     id: 3,
-    name: 'Amara',
-    src: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=400&q=80&fit=crop&crop=face',
-    preview: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=900&q=90&fit=crop&crop=top',
+    name: 'Marcus — Speaker',
+    src: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80&fit=crop&crop=face',
+    preview: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=900&q=90&fit=crop&crop=top',
   },
   {
     id: 4,
-    name: 'Yuki',
-    src: 'https://images.unsplash.com/photo-1524503033411-c9566986fc8f?w=400&q=80&fit=crop&crop=face',
-    preview: 'https://images.unsplash.com/photo-1524503033411-c9566986fc8f?w=900&q=90&fit=crop&crop=top',
+    name: 'Priya — Student',
+    src: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=400&q=80&fit=crop&crop=face',
+    preview: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=900&q=90&fit=crop&crop=top',
   },
 ];
 
@@ -116,19 +116,10 @@ export function AIStudio() {
 
                 {/* Script input */}
                 <div className="flex-1 flex flex-col">
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center mb-3">
                     <h3 className="text-base font-bold text-gray-900 dark:text-foreground">
                       Type your script
                     </h3>
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-white/10 rounded-full text-xs font-medium text-gray-600 dark:text-foreground/85">
-                      <span>Type in any language</span>
-                      <span className="flex -space-x-0.5">
-                        <span title="English" className="text-sm">🇺🇸</span>
-                        <span title="German" className="text-sm">🇩🇪</span>
-                        <span title="Spanish" className="text-sm">🇪🇸</span>
-                      </span>
-                      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-cyan-500 text-white text-[10px] font-bold">+</span>
-                    </div>
                   </div>
 
                   <div className="relative flex-1">

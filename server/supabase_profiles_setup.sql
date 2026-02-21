@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   avatar_group_id text DEFAULT NULL,
   role text DEFAULT 'user',
   credit_balance integer DEFAULT 30,
+  total_views integer DEFAULT 0,
   trial_ends_at timestamptz,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
@@ -21,6 +22,9 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 
 -- Add avatar_group_id to existing tables that were created before this column was added
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS avatar_group_id text DEFAULT NULL;
+
+-- Add total_views to existing tables that were created before this column was added
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS total_views integer DEFAULT 0;
 
 -- Helpful index
 CREATE INDEX IF NOT EXISTS profiles_email_idx ON public.profiles (email);

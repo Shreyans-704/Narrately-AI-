@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
@@ -45,10 +45,15 @@ function ThemeToggle() {
 export function Header() {
   const { user, logout, isTrialActive, getTrialDaysRemaining } = useAuthStore();
   const navigate = useNavigate();
+  const location = useLocation();
   const isLoggedIn = !!user;
   const onTrial = isTrialActive();
   const trialDaysRemaining = getTrialDaysRemaining();
   const [mobileOpen, setMobileOpen] = useState(false);
+  // On all public pages (home, features, pricing, about, etc.) show only the avatar circle.
+  // Only inside /studio routes do we show Dashboard + Sign Out.
+  const onPublicPage = !location.pathname.startsWith('/studio');
+  const onPricingPage = onPublicPage; // keeps existing JSX references working
 
   const handleSignOut = async () => {
     setMobileOpen(false);
@@ -128,20 +133,35 @@ export function Header() {
                   {user!.credit_balance} Credits
                 </div>
 
-                {/* Dashboard button — desktop only */}
-                <Link to="/studio" className="hidden sm:block">
-                  <button className="px-4 py-1.5 rounded-lg bg-[#1a1a1a] border border-white/25 text-white text-sm font-medium hover:bg-[#252525] transition-colors">
-                    Dashboard
-                  </button>
-                </Link>
+                {/* Dashboard button — desktop only; hidden on pricing page */}
+                {!onPricingPage && (
+                  <Link to="/studio" className="hidden sm:block">
+                    <button className="px-4 py-1.5 rounded-lg bg-[#1a1a1a] border border-white/25 text-white text-sm font-medium hover:bg-[#252525] transition-colors">
+                      Dashboard
+                    </button>
+                  </Link>
+                )}
 
-                {/* Sign Out button — desktop only */}
-                <button
-                  onClick={handleSignOut}
-                  className="hidden sm:block px-4 py-1.5 rounded-lg text-white/80 text-sm font-medium hover:text-white transition-colors"
-                >
-                  Sign Out
-                </button>
+                {/* Sign Out button — desktop only; hidden on pricing page */}
+                {!onPricingPage && (
+                  <button
+                    onClick={handleSignOut}
+                    className="hidden sm:block px-4 py-1.5 rounded-lg text-white/80 text-sm font-medium hover:text-white transition-colors"
+                  >
+                    Sign Out
+                  </button>
+                )}
+
+                {/* Avatar circle — shown only on pricing page */}
+                {onPricingPage && (
+                  <Link
+                    to="/studio/profile"
+                    className="hidden sm:flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#00C2FF] to-purple-500 text-white font-bold text-sm flex-shrink-0 hover:opacity-90 transition-opacity"
+                    title="View profile"
+                  >
+                    {(user?.full_name?.[0] || user?.email?.[0] || 'U').toUpperCase()}
+                  </Link>
+                )}
               </motion.div>
             ) : (
               <motion.div
@@ -200,8 +220,14 @@ export function Header() {
             <Link to="/about" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">About</Link>
             {isLoggedIn ? (
               <>
-                <Link to="/studio" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">Dashboard</Link>
-                <button onClick={handleSignOut} className="text-left text-white/70 hover:text-white transition-colors text-sm py-2">Sign Out</button>
+                {onPricingPage ? (
+                  <Link to="/studio/profile" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">My Profile</Link>
+                ) : (
+                  <>
+                    <Link to="/studio" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">Dashboard</Link>
+                    <button onClick={handleSignOut} className="text-left text-white/70 hover:text-white transition-colors text-sm py-2">Sign Out</button>
+                  </>
+                )}
               </>
             ) : (
               <>

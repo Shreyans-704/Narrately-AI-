@@ -23,6 +23,7 @@ export interface Database {
           avatar_url: string | null;
           role: 'user' | 'admin';
           credit_balance: number;
+          total_views: number;
           trial_ends_at: string | null;
           created_at: string;
           updated_at: string;
@@ -34,6 +35,7 @@ export interface Database {
           avatar_url?: string | null;
           role?: 'user' | 'admin';
           credit_balance?: number;
+          total_views?: number;
           trial_ends_at?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -45,6 +47,7 @@ export interface Database {
           avatar_url?: string | null;
           role?: 'user' | 'admin';
           credit_balance?: number;
+          total_views?: number;
           trial_ends_at?: string | null;
           updated_at?: string;
         };

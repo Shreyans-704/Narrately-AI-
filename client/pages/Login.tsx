@@ -29,6 +29,7 @@ export default function Login() {
           full_name: 'Admin',
           role: 'admin' as const,
           credit_balance: 999999,
+          total_views: 0,
           trial_ends_at: null,
           created_at: new Date().toISOString(),
         };

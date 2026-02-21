@@ -9,6 +9,7 @@ export interface User {
   avatar_url?: string;
   role: UserRole;
   credit_balance: number;
+  total_views: number;
   trial_ends_at: string | null;
   created_at: string;
 }
