@@ -28,6 +28,7 @@ export default function Login() {
           email: 'Admin@Narrately',
           full_name: 'Admin',
           role: 'admin' as const,
+          status: 'active' as const,
           credit_balance: 999999,
           total_views: 0,
           trial_ends_at: null,
@@ -51,7 +52,7 @@ export default function Login() {
           if ((currentUser as any).role === 'admin') {
             navigate('/admin-portal');
           } else {
-            navigate('/studio');
+            navigate((currentUser as any).onboarding_completed === false ? '/onboarding' : '/studio');
           }
           return;
         }
@@ -69,7 +70,7 @@ export default function Login() {
           if ((currentUser as any).role === 'admin') {
             navigate('/admin-portal');
           } else {
-            navigate('/studio');
+            navigate((currentUser as any).onboarding_completed === false ? '/onboarding' : '/studio');
           }
           return;
         }
@@ -85,7 +86,7 @@ export default function Login() {
       if ((profile as any).role === 'admin') {
         navigate('/admin-portal');
       } else {
-        navigate('/studio');
+        navigate((profile as any).onboarding_completed === false ? '/onboarding' : '/studio');
       }
     } finally {
       setIsLoading(false);

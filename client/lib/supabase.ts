@@ -22,6 +22,7 @@ export interface Database {
           full_name: string;
           avatar_url: string | null;
           role: 'user' | 'admin';
+          status: 'active' | 'inactive';
           credit_balance: number;
           total_views: number;
           trial_ends_at: string | null;
@@ -34,6 +35,7 @@ export interface Database {
           full_name: string;
           avatar_url?: string | null;
           role?: 'user' | 'admin';
+          status?: 'active' | 'inactive';
           credit_balance?: number;
           total_views?: number;
           trial_ends_at?: string | null;
@@ -46,6 +48,7 @@ export interface Database {
           full_name?: string;
           avatar_url?: string | null;
           role?: 'user' | 'admin';
+          status?: 'active' | 'inactive';
           credit_balance?: number;
           total_views?: number;
           trial_ends_at?: string | null;
@@ -86,11 +89,10 @@ export async function signUp(email: string, password: string, fullName: string) 
 
     if (authError) throw authError;
 
-    // If the Supabase project requires email confirmation, `authData.user` may be null
-    // until the user confirms their email. In that case don't attempt to insert a
-    // profile from the client (Row Level Security may block it) — return a clear
-    // message so the UI can tell the user to check their email.
-    if (!authData.user) {
+    // In Supabase v2, when email confirmation is required `authData.user` is returned
+    // but `authData.session` is null — the user cannot access the app until they confirm.
+    // We check both to handle all cases gracefully.
+    if (!authData.user || !authData.session) {
       return {
         user: null,
         error:
@@ -149,26 +151,34 @@ export async function signIn(email: string, password: string) {
       .single();
 
     // If profile is missing, try to create it (allowed by RLS policy when auth.uid() == id)
-    if (!profileData) {
+    if (!profileData || (profileError && (profileError as any).code === 'PGRST116')) {
       const trialEndDate = getTrialEndDate();
       const { data: createdProfile, error: insertError } = await supabase
         .from('profiles')
         .insert({
           id: data.user.id,
           email,
-          full_name: (data.user.user_metadata as any)?.full_name || null,
+          full_name: (data.user.user_metadata as any)?.full_name || email.split('@')[0],
           role: 'user',
+          status: 'inactive',
           credit_balance: 30,
+          total_views: 0,
+          onboarding_completed: false,
           trial_ends_at: trialEndDate.toISOString(),
         })
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('Failed to create profile on sign-in:', insertError);
+        throw insertError;
+      }
       profileData = createdProfile;
+      profileError = null; // Clear the error since we successfully created the profile
+    } else if (profileError) {
+      // If there's a different error (not "no rows"), throw it
+      throw profileError;
     }
-
-    if (profileError) throw profileError;
 
     return { user: profileData, error: null };
   } catch (error) {
@@ -210,11 +220,36 @@ export async function getCurrentUser() {
     if (!user) return { user: null, error: null };
 
     // Get user profile
-    const { data: profileData, error: profileError } = await supabase
+    let { data: profileData, error: profileError } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', user.id)
       .single();
+
+    // PGRST116 = no rows found — new OAuth (e.g. Google) user with no profile yet.
+    // We MUST use the server endpoint (service_role) because RLS blocks direct
+    // client-side INSERTs for new rows, causing a blank/stuck dashboard screen.
+    if (profileError && (profileError as any).code === 'PGRST116') {
+      const meta = user.user_metadata as any;
+      const response = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          email: user.email ?? '',
+          fullName: meta?.full_name || meta?.name || user.email?.split('@')[0] || 'User',
+          avatarUrl: meta?.avatar_url || meta?.picture || null,
+          setDefaultPassword: true,
+        }),
+      });
+      // If the profile was already created between the SELECT and POST (race), ignore conflict
+      const json = await response.json().catch(() => ({}));
+      if (json.user) return { user: json.user, error: null };
+      // Retry the SELECT in case of duplicate-key (another tab beat us)
+      const { data: retried } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+      if (retried) return { user: retried, error: null };
+      throw new Error(json.error || 'Failed to create profile');
+    }
 
     if (profileError) throw profileError;
 
@@ -261,6 +296,18 @@ export async function updateUserProfile(userId: string, updates: Partial<any>) {
     return { user: data, error: null };
   } catch (error) {
     return { user: null, error: error instanceof Error ? error.message : 'Failed to update profile' };
+  }
+}
+
+export async function changePassword(newPassword: string) {
+  try {
+    // The user is already authenticated via a live session — no re-auth needed.
+    // supabase.auth.updateUser works for both email/password and OAuth users.
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) throw error;
+    return { error: null };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'Failed to update password' };
   }
 }
 

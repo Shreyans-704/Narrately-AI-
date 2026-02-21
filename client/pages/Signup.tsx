@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { signInWithGoogle, signUp } from '@/lib/supabase';
 import { useAuthStore } from '@/store/authStore';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, MailCheck } from 'lucide-react';
 
 export default function Signup() {
   const [fullName, setFullName] = useState('');
@@ -10,6 +10,7 @@ export default function Signup() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -46,7 +47,12 @@ export default function Signup() {
       const { user: createdUser, error: signupError } = await signUp(email, password, fullName);
 
       if (signupError) {
-        setError(signupError);
+        // Distinguish email confirmation info from real errors
+        if (signupError.toLowerCase().includes('confirmation email') || signupError.toLowerCase().includes('check your inbox')) {
+          setSuccessMessage(signupError);
+        } else {
+          setError(signupError);
+        }
         return;
       }
 
@@ -66,13 +72,13 @@ export default function Signup() {
 
     try {
       console.log('Initiating Google sign-up...');
-      const { data, error } = await signInWithGoogle('/onboarding');
+      const { data, error } = await signInWithGoogle('/studio');
       
       if (error) {
         console.error('Google signup error:', error);
         setError(error);
       } else if (data) {
-        // Google OAuth will redirect to onboarding after successful signup
+        // Google OAuth will redirect to /studio after successful signup
         console.log('Google sign-up initiated, redirecting...');
       }
     } catch (err) {
@@ -164,6 +170,14 @@ export default function Signup() {
           {error && (
             <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-red-400 text-sm">
               {error}
+            </div>
+          )}
+
+          {/* Email confirmation success */}
+          {successMessage && (
+            <div className="mb-4 p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 text-sm flex items-start gap-3">
+              <MailCheck className="w-5 h-5 shrink-0 mt-0.5" />
+              <span>{successMessage}</span>
             </div>
           )}
 

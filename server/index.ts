@@ -5,7 +5,7 @@ import { handleDemo } from "./routes/demo";
 import { handleSignup } from "./routes/signup";
 import { handleAdminLogin } from "./routes/admin-login";
 import { handleGetAdminUsers } from "./routes/admin-users";
-import { handleUpdateCredits, handleUpdateRole, handleDeleteUser, handleUpdateAvatarGroup } from './routes/admin-manage';
+import { handleUpdateCredits, handleUpdateRole, handleDeleteUser, handleUpdateAvatarGroup, handleUpdateStatus } from './routes/admin-manage';
 
 export function createServer() {
   const app = express();
@@ -29,8 +29,7 @@ export function createServer() {
   app.get("/api/admin/users", handleGetAdminUsers);
   app.patch("/api/admin/users/:id/credits", handleUpdateCredits);
   app.patch("/api/admin/users/:id/role", handleUpdateRole);
-  app.patch("/api/admin/users/:id/avatar-group", handleUpdateAvatarGroup);
-  app.delete("/api/admin/users/:id", handleDeleteUser);
+  app.patch("/api/admin/users/:id/avatar-group", handleUpdateAvatarGroup);  app.patch('/api/admin/users/:id/status', handleUpdateStatus);  app.delete("/api/admin/users/:id", handleDeleteUser);
 
   return app;
 }

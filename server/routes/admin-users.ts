@@ -27,17 +27,21 @@ export const handleGetAdminUsers: RequestHandler = async (_req, res) => {
       .select('id, full_name, role, credit_balance, avatar_url, trial_ends_at');
     if (profilesError) throw profilesError;
 
-    // Try to fetch avatar_group_id separately (column may not exist yet)
+    // Try to fetch avatar_group_id + status separately (columns may not exist in old tables)
     let avatarGroupMap = new Map<string, string | null>();
+    let statusMap = new Map<string, 'active' | 'inactive'>();
     try {
       const { data: agData } = await supabase
         .from('profiles')
-        .select('id, avatar_group_id');
+        .select('id, avatar_group_id, status');
       if (agData) {
-        agData.forEach((row: any) => avatarGroupMap.set(row.id, row.avatar_group_id ?? null));
+        agData.forEach((row: any) => {
+          avatarGroupMap.set(row.id, row.avatar_group_id ?? null);
+          statusMap.set(row.id, (row.status as 'active' | 'inactive') ?? 'inactive');
+        });
       }
     } catch (_) {
-      // column doesn't exist yet — all users will show as inactive until column is added
+      // columns don't exist yet — all users will show as inactive until columns are added
     }
 
     const profileMap = new Map((profiles || []).map((p) => [p.id, p]));
@@ -58,6 +62,7 @@ export const handleGetAdminUsers: RequestHandler = async (_req, res) => {
         display_name: profile?.full_name || (u.user_metadata as any)?.full_name || (u.user_metadata as any)?.name || '-',
         avatar_url: profile?.avatar_url || (u.user_metadata as any)?.avatar_url || null,
         avatar_group_id: avatarGroupMap.get(u.id) ?? null,
+        status: statusMap.get(u.id) ?? 'inactive',
         providers,
         provider_type: providerType,
         role: profile?.role || 'user',

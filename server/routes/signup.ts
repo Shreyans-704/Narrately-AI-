@@ -11,10 +11,12 @@ interface SignupRequest {
   userId: string;
   email: string;
   fullName: string;
+  avatarUrl?: string | null;
+  setDefaultPassword?: boolean;
 }
 
 export const handleSignup: RequestHandler = async (req, res) => {
-  const { userId, email, fullName } = req.body as SignupRequest;
+  const { userId, email, fullName, avatarUrl, setDefaultPassword } = req.body as SignupRequest;
 
   if (!userId || !email || !fullName) {
     res.status(400).json({ error: 'Missing required fields' });
@@ -26,23 +28,53 @@ export const handleSignup: RequestHandler = async (req, res) => {
     const trialEndDate = new Date();
     trialEndDate.setMonth(trialEndDate.getMonth() + 3);
 
-    const { data, error } = await supabaseAdmin
+    const { data: upsertData, error } = await supabaseAdmin
       .from('profiles')
-      .insert({
-        id: userId,
-        email,
-        full_name: fullName,
-        role: 'user',
-        credit_balance: 30,
-        trial_ends_at: trialEndDate.toISOString(),
-      })
-      .select()
-      .single();
+      .upsert(
+        {
+          id: userId,
+          email,
+          full_name: fullName,
+          avatar_url: avatarUrl ?? null,
+          role: 'user',
+          status: 'inactive',   // admin must activate the user before they can access the app
+          credit_balance: 30,
+          total_views: 0,
+          onboarding_completed: false,
+          trial_ends_at: trialEndDate.toISOString(),
+        },
+        { onConflict: 'id', ignoreDuplicates: true }
+      )
+      .select();
 
     if (error) {
       console.error('Profile creation error:', error);
       res.status(400).json({ error: error.message });
       return;
+    }
+
+    // ignoreDuplicates returns 0 rows when the row already existed — fetch it explicitly
+    let data = upsertData && upsertData.length > 0 ? upsertData[0] : null;
+    if (!data) {
+      const { data: existing, error: existErr } = await supabaseAdmin
+        .from('profiles').select('*').eq('id', userId).maybeSingle();
+      if (existErr || !existing) {
+        console.error('Failed to fetch existing profile:', existErr);
+        res.status(500).json({ error: 'Profile creation failed' });
+        return;
+      }
+      data = existing;
+    }
+
+    // For OAuth users (e.g. Google), set a default password so they can later
+    // change it via the normal "current password" flow.
+    if (setDefaultPassword) {
+      const { error: pwError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+        password: 'Narrately@first123',
+      });
+      if (pwError) {
+        console.warn('Could not set default password for OAuth user:', pwError.message);
+      }
     }
 
     res.json({ user: data, error: null });

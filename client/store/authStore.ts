@@ -8,10 +8,15 @@ export interface User {
   full_name: string;
   avatar_url?: string;
   role: UserRole;
+  status: 'active' | 'inactive';
   credit_balance: number;
   total_views: number;
   trial_ends_at: string | null;
   created_at: string;
+  onboarding_completed?: boolean;
+  onboarding_goal?: string;
+  onboarding_role?: string;
+  onboarding_persona?: string;
 }
 
 interface AuthState {

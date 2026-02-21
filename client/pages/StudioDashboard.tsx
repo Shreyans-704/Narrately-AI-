@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, Navigate } from "react-router-dom";
 import { useAuthStore } from "@/store/authStore";
 import { signOut, getCurrentUser, supabase } from "@/lib/supabase";
 import { useTheme } from "@/hooks/useTheme";
@@ -242,11 +242,11 @@ const SubscriptionWidget = ({ isMobile, creditBalance, trialEndsAt }: { isMobile
                 </div>
               </div>
               {lowQuotaWarning && (
-                <div style={s.warningBox}><AlertCircleIcon /><span>Running low on credits</span></div>
+                <div style={s.warningBox}><AlertCircleIcon /><span>Running low on free videos</span></div>
               )}
             </div>
             <div style={s.subActionsMobile}>
-              <Link to="/pricing" style={{ ...s.btnPrimaryMobile, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}><PlusIcon /> Buy More Credits</Link>
+              <Link to="/pricing" style={{ ...s.btnPrimaryMobile, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}><PlusIcon /> Upgrade Plan</Link>
             </div>
           </div>
         )}
@@ -261,7 +261,7 @@ const SubscriptionWidget = ({ isMobile, creditBalance, trialEndsAt }: { isMobile
           <div style={s.subIconWrap}><CreditCardIcon /></div>
           <div>
             <div style={s.subTitle}>Your Subscription</div>
-            <div style={s.subSubtitle}>Manage your video generation credits</div>
+            <div style={s.subSubtitle}>Manage your free video quota</div>
           </div>
         </div>
         <button style={s.manageBtn}><CreditCardIcon /> Manage</button>
@@ -295,13 +295,13 @@ const SubscriptionWidget = ({ isMobile, creditBalance, trialEndsAt }: { isMobile
         {lowQuotaWarning && (
           <div style={s.warningBox}>
             <AlertCircleIcon />
-            <span>You're running low on credits. Consider topping up to continue generating videos.</span>
+            <span>You're running low on free videos. Upgrade your plan to continue generating videos.</span>
           </div>
         )}
       </div>
 
       <div style={s.subActions}>
-        <Link to="/pricing" style={{ ...s.btnPrimary, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}><PlusIcon /> Buy More Credits</Link>
+        <Link to="/pricing" style={{ ...s.btnPrimary, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}><PlusIcon /> Upgrade Plan</Link>
         <Link to="/pricing" style={{ ...s.btnSecondary, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>View All Plans <ArrowRightIcon /></Link>
       </div>
     </div>
@@ -422,35 +422,84 @@ export default function StudioDashboard() {
   const { isMobile } = useResponsive();
   const [greeting, setGreeting] = useState("Good morning");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  // authChecking: true while we verify session with Supabase (handles OAuth redirect)
+  const [authChecking, setAuthChecking] = useState(true);
   const navigate = useNavigate();
   const { user, logout, setUser } = useAuthStore();
   const { theme, toggle } = useTheme();
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
     const hour = new Date().getHours();
     if (hour < 12) setGreeting("Good morning");
     else if (hour < 18) setGreeting("Good afternoon");
     else setGreeting("Good evening");
 
-    // Refresh profile from Supabase on mount
-    getCurrentUser().then(({ user: freshUser }) => {
-      if (freshUser) setUser(freshUser as any);
-    });
+    let mounted = true;
 
-    // Re-sync profile on session refresh / token rotation
-    const { data: { subscription: authListener } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // Detect Supabase OAuth PKCE redirect — URL contains ?code= until Supabase
+    // exchanges it for a session. Never navigate away while this is in the URL.
+    const isOAuthRedirect =
+      window.location.search.includes('code=') ||
+      window.location.hash.includes('access_token=');
+
+    // onAuthStateChange is the single source of truth for all auth transitions:
+    //   INITIAL_SESSION – fires immediately on page load (null = not logged in)
+    //   SIGNED_IN       – fires when OAuth code exchange completes
+    //   TOKEN_REFRESHED – fires on token rotation
+    //   SIGNED_OUT      – fires on explicit logout
+    const { data: { subscription: authListener } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+
       if (session?.user) {
-        getCurrentUser().then(({ user: freshUser }) => {
-          if (freshUser) setUser(freshUser as any);
-        });
+        // Authenticated — fetch full profile (auto-creates it for new Google users)
+        const { user: freshUser } = await getCurrentUser();
+        if (!mounted) return;
+        if (freshUser) {
+          setUser(freshUser as any);
+          setAuthChecking(false);
+        } else {
+          // Session exists but profile fetch/creation failed — redirect to avoid blank screen
+          navigate('/login');
+        }
+      } else if (event === 'INITIAL_SESSION' || event === 'SIGNED_OUT') {
+        // INITIAL_SESSION with no session = definitely not logged in.
+        // But if this is an OAuth redirect, the SIGNED_IN event will arrive shortly —
+        // do NOT redirect yet.
+        if (!isOAuthRedirect) {
+          navigate('/login');
+        }
       }
     });
 
-    // Realtime subscription — instantly reflect credit_balance changes from Supabase
+    // If the user is already in the Zustand store (e.g. came from Login page),
+    // clear the spinner immediately and silently refresh the profile in the background.
+    if (user) {
+      setAuthChecking(false);
+      getCurrentUser().then(({ user: freshUser }) => {
+        if (mounted && freshUser) setUser(freshUser as any);
+      });
+    }
+
+    // Safety net: if nothing has resolved after 10 s, give up and send to login.
+    const timeout = setTimeout(() => {
+      if (mounted) {
+        setAuthChecking((prev) => {
+          if (prev) navigate('/login');
+          return false;
+        });
+      }
+    }, 10000);
+
+    return () => {
+      mounted = false;
+      clearTimeout(timeout);
+      authListener.unsubscribe();
+    };
+  }, []);
+
+  // Realtime subscription — set up only once the user id is known
+  useEffect(() => {
+    if (!user?.id) return;
     const channel = supabase
       .channel(`profile-credits-${user.id}`)
       .on(
@@ -463,10 +512,9 @@ export default function StudioDashboard() {
       .subscribe();
 
     return () => {
-      authListener.unsubscribe();
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [user?.id]);
 
   const handleLogout = async () => {
     await signOut();
@@ -474,7 +522,70 @@ export default function StudioDashboard() {
     navigate("/login");
   };
 
-  if (!user) return null;
+  if (authChecking || !user) {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f8f7f4" }}>
+        <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid #e5e7eb", borderTopColor: "#6366f1", animation: "spin 0.7s linear infinite" }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
+
+  // Inactive users cannot access the dashboard — show a pending approval screen
+  if ((user as any).status === 'inactive') {
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#080808", padding: "24px" }}>
+        <style>{`@keyframes pulse-ring { 0%,100%{opacity:.4;transform:scale(1)}50%{opacity:.15;transform:scale(1.08)} }`}</style>
+        {/* Glow */}
+        <div style={{ position: "absolute", width: 400, height: 400, borderRadius: "50%", background: "radial-gradient(circle, rgba(0,194,255,0.08) 0%, transparent 70%)", pointerEvents: "none" }} />
+        {/* Icon ring */}
+        <div style={{ position: "relative", marginBottom: 32 }}>
+          <div style={{ width: 72, height: 72, borderRadius: "50%", border: "2px solid rgba(0,194,255,0.25)", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,194,255,0.08)", animation: "pulse-ring 2.4s ease-in-out infinite" }}>
+            <svg width="32" height="32" fill="none" stroke="#00C2FF" strokeWidth="1.8" viewBox="0 0 24 24">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+        </div>
+        {/* Text */}
+        <img src="/narrately-logo.svg" alt="Narrately" style={{ width: 36, height: 36, marginBottom: 16, opacity: 0.9 }} />
+        <h1 style={{ color: "#ffffff", fontSize: 22, fontWeight: 700, marginBottom: 8, textAlign: "center" }}>Account Pending Approval</h1>
+        <p style={{ color: "rgba(255,255,255,0.5)", fontSize: 14, maxWidth: 380, textAlign: "center", lineHeight: 1.6, marginBottom: 32 }}>
+          Your account has been created and is awaiting activation by our team. You'll get access once an admin assigns your avatar ID and activates your account.
+        </p>
+        {/* Info card */}
+        <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "20px 24px", maxWidth: 380, width: "100%", marginBottom: 28 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+            <div style={{ width: 32, height: 32, borderRadius: "50%", background: "linear-gradient(135deg,#7c3aed,#00C2FF)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: "#fff", flexShrink: 0 }}>
+              {(user.full_name?.[0] || user.email?.[0] || "U").toUpperCase()}
+            </div>
+            <div>
+              <p style={{ color: "#fff", fontSize: 13, fontWeight: 600, margin: 0 }}>{user.full_name || "—"}</p>
+              <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 11, margin: 0 }}>{user.email}</p>
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, background: "rgba(245,158,11,0.1)", border: "1px solid rgba(245,158,11,0.2)", borderRadius: 8, padding: "10px 14px" }}>
+            <svg width="14" height="14" fill="none" stroke="#f59e0b" strokeWidth="2" viewBox="0 0 24 24" style={{ flexShrink: 0 }}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span style={{ color: "#f59e0b", fontSize: 12, fontWeight: 600 }}>Status: Awaiting admin activation</span>
+          </div>
+        </div>
+        {/* Actions */}
+        <div style={{ display: "flex", gap: 12 }}>
+          <a href="mailto:support@narrately.ai" style={{ padding: "10px 20px", borderRadius: 8, background: "rgba(0,194,255,0.12)", border: "1px solid rgba(0,194,255,0.25)", color: "#00C2FF", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
+            Contact Support
+          </a>
+          <button onClick={() => { signOut(); logout(); navigate('/login'); }} style={{ padding: "10px 20px", borderRadius: 8, background: "transparent", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.5)", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Active users who haven't completed onboarding yet → redirect first.
+  // Only redirect when explicitly false — undefined means DB column not yet present (treat as done).
+  if ((user as any).onboarding_completed === false) {
+    return <Navigate to="/onboarding" replace />;
+  }
 
   const displayName = user.full_name?.split(" ")[0] || user.email?.split("@")[0] || "there";
   const avatarChar = (user.full_name?.[0] || user.email?.[0] || "U").toUpperCase();
@@ -489,7 +600,7 @@ export default function StudioDashboard() {
   };
 
   const stats = [
-    { label: "Credits Remaining", value: String(creditBalance), change: "of 30", trend: "up", icon: <VideoIcon /> },
+    { label: "Free Videos Remaining", value: String(creditBalance), change: "of 30", trend: "up", icon: <VideoIcon /> },
     { label: "This Month", value: String(Math.max(0, 30 - creditBalance)), change: "videos made", trend: "up", icon: <CalendarIcon /> },
     { label: "Total Views", value: formatViews(totalViews), change: "all time", trend: "up", icon: <TrendingUpIcon /> },
   ];

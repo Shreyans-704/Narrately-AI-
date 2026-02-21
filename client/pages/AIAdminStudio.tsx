@@ -5,7 +5,7 @@ import {
   CheckCircle2, AlertCircle, Mail,
   Crown, Zap, BarChart3, Edit2, Save, ChevronRight,
   Settings, LayoutDashboard, UserCog, TrendingUp, Menu,
-  Sun, Moon, Search, Filter, Layers, Calendar,
+  Sun, Moon, Search, Filter, Layers, Calendar, Power,
 } from 'lucide-react';
 import { useAdminStore } from '@/store/adminStore';
 import { cn } from '@/lib/utils';
@@ -18,6 +18,7 @@ interface AdminUser {
   display_name: string;
   avatar_url: string | null;
   avatar_group_id: string | null;
+  status: 'active' | 'inactive';
   providers: string[];
   provider_type: string;
   role: 'user' | 'admin';
@@ -138,8 +139,8 @@ function AssignModal({
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <span>
               {selectedGroup
-                ? `Assigning "${AVATAR_GROUPS.find((g) => g.id === selectedGroup)?.name ?? selectedGroup}" will link this user to the selected avatar group.`
-                : "Removing the Avatar Group ID will unlink this user from their current avatar group."}
+                ? `Assigning "${AVATAR_GROUPS.find((g) => g.id === selectedGroup)?.name ?? selectedGroup}" will link this user to the selected avatar group and \u2022 activate their account.`
+                : "Removing the Avatar Group ID will unlink this user and \u2022 deactivate their account until a new group is assigned."}
             </span>
           </div>
         </div>
@@ -175,7 +176,7 @@ function AssignModal({
 const STAT_COLS = [
   { label: 'Total Users',         key: 'total',     Icon: Users,    color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20' },
   { label: 'Admins',              key: 'admins',    Icon: Crown,    color: 'text-amber-400',  bg: 'bg-amber-500/10',  border: 'border-amber-500/20' },
-  { label: 'Credits Distributed', key: 'credits',   Icon: Zap,      color: 'text-cyan-400',   bg: 'bg-cyan-500/10',   border: 'border-cyan-500/20' },
+  { label: 'Free Videos Distributed', key: 'credits',   Icon: Zap,      color: 'text-cyan-400',   bg: 'bg-cyan-500/10',   border: 'border-cyan-500/20' },
   { label: 'Auth Providers',      key: 'providers', Icon: BarChart3, color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20' },
 ] as const;
 
@@ -251,7 +252,7 @@ export default function AIAdminStudio() {
       });
       if (!res.ok) throw new Error((await res.json()).error);
       setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, credit_balance: editingCredit } : u));
-      cancelEdit(); showToast('Credits updated successfully');
+      cancelEdit(); showToast('Free Videos updated successfully');
     } catch (e: any) { showToast(e.message, false); }
     finally { setSaving(false); }
   };
@@ -277,9 +278,34 @@ export default function AIAdminStudio() {
         body: JSON.stringify({ avatar_group_id: groupId }),
       });
       if (!res.ok) throw new Error((await res.json()).error);
-      setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, avatar_group_id: groupId } : u));
-      showToast(groupId ? `Avatar group assigned — user activated` : 'Avatar group removed — user deactivated');
+      // Server also sets status: active when groupId set, inactive when removed
+      setUsers((prev) => prev.map((u) => u.id === userId ? { ...u, avatar_group_id: groupId, status: groupId ? 'active' : 'inactive' } : u));
+      showToast(groupId ? `Avatar group assigned — user activated ✅` : 'Avatar group removed — user deactivated');
     } catch (e: any) { showToast(e.message, false); }
+  };
+
+  const handleToggleStatus = async (u: AdminUser) => {
+    const newStatus = u.status === 'active' ? 'inactive' : 'active';
+    console.log('[handleToggleStatus] Starting...', { userId: u.id, currentStatus: u.status, newStatus });
+    try {
+      const res = await fetch(`/api/admin/users/${u.id}/status`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      console.log('[handleToggleStatus] Response received:', { ok: res.ok, status: res.status });
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error('[handleToggleStatus] Error response:', errorData);
+        throw new Error(errorData.error);
+      }
+      const successData = await res.json();
+      console.log('[handleToggleStatus] Success data:', successData);
+      setUsers((prev) => prev.map((x) => x.id === u.id ? { ...x, status: newStatus } : x));
+      showToast(`User ${newStatus === 'active' ? 'activated' : 'deactivated'} successfully`);
+    } catch (e: any) { 
+      console.error('[handleToggleStatus] Caught error:', e);
+      showToast(e.message, false); 
+    }
   };
 
   const handleDelete = async (userId: string) => {
@@ -305,12 +331,8 @@ export default function AIAdminStudio() {
 
   // Decide which rows to show based on section, search, and filter
   const baseRows = activeSection === 'roles' ? signedInUsers.filter((u) => u.role === 'admin') : signedInUsers;
-  // Active = signed in within the last 30 days
-  const isUserActive = (u: AdminUser) => {
-    if (!u.last_sign_in_at) return false;
-    const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
-    return new Date(u.last_sign_in_at).getTime() > thirtyDaysAgo;
-  };
+  // Active = status field from DB
+  const isUserActive = (u: AdminUser) => u.status === 'active';
   const filteredRows = baseRows.filter((u) => {
     const q = searchQuery.toLowerCase();
     const matchSearch = !q || u.email.toLowerCase().includes(q) || (u.display_name !== '-' && u.display_name.toLowerCase().includes(q));
@@ -374,7 +396,7 @@ export default function AIAdminStudio() {
           <p className="text-[10px] font-bold uppercase tracking-widest text-foreground/50 px-1 mb-3">Quick Stats</p>
           {[
             { label: 'Signed-in Users', value: loading ? '—' : signedInUsers.length },
-            { label: 'Total Credits',   value: loading ? '—' : totalCredits },
+            { label: 'Total Free Videos',   value: loading ? '—' : totalCredits },
             { label: 'Admin Accounts',  value: loading ? '—' : allAdmins.length },
           ].map(({ label, value }) => (
             <div key={label} className="flex items-center justify-between px-2">
@@ -635,7 +657,7 @@ export default function AIAdminStudio() {
                 <table className="w-full text-sm" style={{ minWidth: '900px' }}>
                   <thead>
                     <tr className="border-b border-border bg-foreground/[0.02]">
-                      {['', 'User', 'Email', 'Status', 'Avatar Group ID', 'Date Joined', 'Credits', 'Role', 'Last Sign In', 'Actions'].map((h, i) => (
+                      {['', 'User', 'Email', 'Status', 'Avatar Group ID', 'Date Joined', 'Free Videos', 'Role', 'Last Sign In', 'Actions'].map((h, i) => (
                         <th key={i} className="px-4 py-3 text-left text-[10px] font-bold text-foreground/40 uppercase tracking-wider whitespace-nowrap">{h}</th>
                       ))}
                     </tr>
@@ -799,6 +821,21 @@ export default function AIAdminStudio() {
                           {/* Actions */}
                           <td className="px-4 py-3.5 whitespace-nowrap">
                             <div className="flex items-center gap-1.5">
+                              {/* Toggle active / inactive */}
+                              <motion.button
+                                whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.92 }}
+                                onClick={() => handleToggleStatus(u)}
+                                title={active ? 'Deactivate user' : 'Activate user'}
+                                className={cn(
+                                  'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-xs font-semibold transition-all',
+                                  active
+                                    ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-500 hover:bg-red-500/10 hover:border-red-500/25 hover:text-red-500'
+                                    : 'bg-amber-500/10 border-amber-500/25 text-amber-500 hover:bg-emerald-500/10 hover:border-emerald-500/25 hover:text-emerald-500',
+                                )}
+                              >
+                                <Power className="w-3 h-3" />
+                                {active ? 'Active' : 'Inactive'}
+                              </motion.button>
                               <button
                                 onClick={() => setAssigningUser(u)}
                                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-[#00C2FF] text-xs font-semibold hover:bg-[#00C2FF]/10 hover:border-[#00C2FF]/40 transition-all whitespace-nowrap"
@@ -827,7 +864,7 @@ export default function AIAdminStudio() {
                   Showing {filteredRows.length} of {baseRows.length} accounts
                 </p>
                 <p className="text-xs font-semibold text-foreground/40 flex items-center gap-1">
-                  Click <Edit2 className="inline w-2.5 h-2.5 mx-0.5" /> on Credits or Role to edit inline
+                  Click <Edit2 className="inline w-2.5 h-2.5 mx-0.5" /> on Free Videos or Role to edit inline
                 </p>
               </div>
             )}

@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS public.profiles (
   avatar_url text,
   avatar_group_id text DEFAULT NULL,
   role text DEFAULT 'user',
+  status text DEFAULT 'inactive' CHECK (status IN ('active', 'inactive')),
   credit_balance integer DEFAULT 30,
   total_views integer DEFAULT 0,
   trial_ends_at timestamptz,
@@ -23,8 +24,17 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 -- Add avatar_group_id to existing tables that were created before this column was added
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS avatar_group_id text DEFAULT NULL;
 
+-- Add status column — new users are inactive until admin activates them
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS status text DEFAULT 'inactive' CHECK (status IN ('active', 'inactive'));
+
 -- Add total_views to existing tables that were created before this column was added
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS total_views integer DEFAULT 0;
+
+-- Onboarding tracking
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS onboarding_completed boolean DEFAULT false;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS onboarding_goal text DEFAULT NULL;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS onboarding_role text DEFAULT NULL;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS onboarding_persona text DEFAULT NULL;
 
 -- Helpful index
 CREATE INDEX IF NOT EXISTS profiles_email_idx ON public.profiles (email);
@@ -33,17 +43,20 @@ CREATE INDEX IF NOT EXISTS profiles_email_idx ON public.profiles (email);
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- Allow authenticated users to insert their own profile (id must match auth.uid())
-CREATE POLICY IF NOT EXISTS profiles_insert_own ON public.profiles
+DROP POLICY IF EXISTS profiles_insert_own ON public.profiles;
+CREATE POLICY profiles_insert_own ON public.profiles
   FOR INSERT
   WITH CHECK (auth.uid() = id);
 
 -- Allow authenticated users to select their own profile
-CREATE POLICY IF NOT EXISTS profiles_select_own ON public.profiles
+DROP POLICY IF EXISTS profiles_select_own ON public.profiles;
+CREATE POLICY profiles_select_own ON public.profiles
   FOR SELECT
   USING (auth.uid() = id);
 
 -- Allow authenticated users to update their own profile
-CREATE POLICY IF NOT EXISTS profiles_update_own ON public.profiles
+DROP POLICY IF EXISTS profiles_update_own ON public.profiles;
+CREATE POLICY profiles_update_own ON public.profiles
   FOR UPDATE
   USING (auth.uid() = id)
   WITH CHECK (auth.uid() = id);

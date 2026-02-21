@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '@/store/authStore';
 import { Zap, Flame, ArrowRight, Menu, X, Sun, Moon } from 'lucide-react';
-import { getCurrentUser, signOut } from '@/lib/supabase';
+import { getCurrentUser, signOut, supabase } from '@/lib/supabase';
 import { useTheme } from '@/hooks/useTheme';
 
 const navVariants = {
@@ -247,6 +247,8 @@ function AuthInitializer() {
 
   useEffect(() => {
     let mounted = true;
+
+    // Populate store on initial load
     (async () => {
       try {
         const { user } = await getCurrentUser();
@@ -254,8 +256,20 @@ function AuthInitializer() {
         if (user) setUser(user as any);
       } catch (_) {}
     })();
+
+    // Also catch OAuth SIGNED_IN events (Google redirect lands here)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
+        try {
+          const { user } = await getCurrentUser();
+          if (mounted && user) setUser(user as any);
+        } catch (_) {}
+      }
+    });
+
     return () => {
       mounted = false;
+      subscription.unsubscribe();
     };
   }, [setUser]);
 

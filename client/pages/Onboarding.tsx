@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '@/store/authStore';
+import { updateUserProfile, getCurrentUser } from '@/lib/supabase';
 
 const TOTAL_STEPS = 3;
 
@@ -59,6 +61,8 @@ export default function Onboarding() {
   const [role, setRole] = useState('Marketing');
   const [persona, setPersona] = useState(0);
 
+  const { user, setUser } = useAuthStore();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const progress = (step / TOTAL_STEPS) * 100;
 
   const next = () => {
@@ -69,7 +73,29 @@ export default function Onboarding() {
     setDir(-1);
     setStep((s) => s - 1);
   };
-  const submit = () => navigate('/studio');
+  const submit = async () => {
+    if (!user?.id) { navigate('/studio'); return; }
+    setIsSubmitting(true);
+    // Save onboarding answers — use server endpoint so service_role bypasses RLS
+    await updateUserProfile(user.id, {
+      onboarding_goal: goal,
+      onboarding_role: role,
+      onboarding_persona: personas[persona].title,
+      onboarding_completed: true,
+      updated_at: new Date().toISOString(),
+    });
+    // Re-fetch the full profile so the store reflects onboarding_completed: true
+    // BEFORE we navigate — prevents StudioDashboard from bouncing back here.
+    const { user: freshUser } = await getCurrentUser();
+    if (freshUser) {
+      setUser(freshUser as any);
+    } else {
+      // If fetch fails, patch the store in-memory so the check still passes
+      setUser({ ...(user as any), onboarding_completed: true } as any);
+    }
+    setIsSubmitting(false);
+    navigate('/studio');
+  };
 
   return (
     <div className="min-h-screen bg-[#080808] flex items-center justify-center px-4 py-12 relative overflow-hidden">
@@ -236,9 +262,10 @@ export default function Onboarding() {
                   </button>
                   <button
                     onClick={submit}
-                    className="px-10 py-3 rounded-full bg-[#00C2FF] text-black font-semibold text-sm hover:bg-[#00aadd] transition-colors"
+                    disabled={isSubmitting}
+                    className="px-10 py-3 rounded-full bg-[#00C2FF] text-black font-semibold text-sm hover:bg-[#00aadd] disabled:opacity-60 transition-colors"
                   >
-                    Submit
+                    {isSubmitting ? 'Saving…' : 'Get Started'}
                   </button>
                 </div>
               </motion.div>

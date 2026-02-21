@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -27,9 +27,10 @@ import {
   Eye,
   EyeOff,
   Info,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
-import { signOut, updateUserProfile, uploadAvatar } from "@/lib/supabase";
+import { signOut, updateUserProfile, uploadAvatar, changePassword } from "@/lib/supabase";
 import { useTheme } from "@/hooks/useTheme";
 
 // ── Sidebar nav items ──────────────────────────────────────
@@ -41,10 +42,20 @@ const sidebarNavItems = [
   { icon: FolderOpen, label: "Projects" },
 ];
 
+// ── Onboarding choices (reused in Preferences tab) ───────
+const onboardingGoals = ['Social Media', 'Ads', 'Education & Training Videos', 'Product Demos', 'Internal Communications', 'Video Translations', 'Podcasts', 'Other'];
+const onboardingRoles = ['Marketing', 'Sales', 'Education & Training', 'Business Owner', 'Content Creator', 'Other'];
+const onboardingPersonas = [
+  { title: 'I run my own business or work independently', sub: 'Freelancer, solopreneur, or founder' },
+  { title: 'I work at a company or as part of a team', sub: 'Employee, agency, or enterprise team member' },
+  { title: "I'm just trying things out for fun or learning", sub: 'Student, hobbyist, or curious creator' },
+];
+
 // ── Profile sub-nav ────────────────────────────────────────
 const profileNavItems = [
   { id: "profile", label: "My Profile", icon: User },
   { id: "security", label: "Security", icon: Lock },
+  { id: "preferences", label: "Preferences", icon: SlidersHorizontal },
 ];
 
 // ── Google icon (SVG) ──────────────────────────────────────
@@ -107,6 +118,36 @@ export default function UserProfile() {
   const [showPw, setShowPw] = useState({ cur: false, new: false, con: false });
   const [pwForm, setPwForm] = useState({ cur: "", new: "", con: "" });
   const [pwStrength, setPwStrength] = useState(0);
+  const [pwLoading, setPwLoading] = useState(false);
+  const [pwError, setPwError] = useState<string | null>(null);
+  const [pwSuccess, setPwSuccess] = useState(false);
+
+  // Preferences state
+  const [prefGoal, setPrefGoal] = useState<string>((user as any)?.onboarding_goal || 'Social Media');
+  const [prefRole, setPrefRole] = useState<string>((user as any)?.onboarding_role || 'Marketing');
+  const [prefPersona, setPrefPersona] = useState<number>(() => {
+    const saved = (user as any)?.onboarding_persona;
+    if (!saved) return 0;
+    const idx = onboardingPersonas.findIndex((p) => p.title === saved);
+    return idx >= 0 ? idx : 0;
+  });
+  const [prefLoading, setPrefLoading] = useState(false);
+  const [prefError, setPrefError] = useState<string | null>(null);
+  const [prefSuccess, setPrefSuccess] = useState(false);
+
+  // Keep preference form in sync when the user store updates (e.g. right after
+  // returning from onboarding where fresh DB data was fetched before navigating here)
+  useEffect(() => {
+    if (!user) return;
+    setPrefGoal((user as any).onboarding_goal || 'Social Media');
+    setPrefRole((user as any).onboarding_role || 'Marketing');
+    setPrefPersona(() => {
+      const saved = (user as any).onboarding_persona;
+      if (!saved) return 0;
+      const idx = onboardingPersonas.findIndex((p) => p.title === saved);
+      return idx >= 0 ? idx : 0;
+    });
+  }, [user?.id, (user as any)?.onboarding_goal, (user as any)?.onboarding_role, (user as any)?.onboarding_persona]);
 
   const fileRef = useRef<HTMLInputElement>(null);
   const isActive = true;
@@ -167,6 +208,47 @@ export default function UserProfile() {
     setEditingName(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
+  };
+
+  const handleChangePassword = async () => {
+    setPwError(null);
+    setPwSuccess(false);
+    if (pwForm.new.length < 8) { setPwError('New password must be at least 8 characters.'); return; }
+    if (!/[A-Z]/.test(pwForm.new)) { setPwError('New password must contain at least one uppercase letter.'); return; }
+    if (!/[0-9]/.test(pwForm.new)) { setPwError('New password must contain at least one number.'); return; }
+    if (pwForm.new !== pwForm.con) { setPwError('New passwords do not match.'); return; }
+
+    setPwLoading(true);
+    const { error } = await changePassword(pwForm.new);
+    setPwLoading(false);
+
+    if (error) {
+      setPwError(error);
+    } else {
+      setPwSuccess(true);
+      setPwForm({ cur: '', new: '', con: '' });
+      setPwStrength(0);
+      setTimeout(() => setPwSuccess(false), 4000);
+    }
+  };
+
+  const handleSavePreferences = async () => {
+    if (!user?.id) return;
+    setPrefLoading(true);
+    setPrefError(null);
+    setPrefSuccess(false);
+    const { user: updated, error } = await updateUserProfile(user.id, {
+      onboarding_goal: prefGoal,
+      onboarding_role: prefRole,
+      onboarding_persona: onboardingPersonas[prefPersona].title,
+      onboarding_completed: true,
+      updated_at: new Date().toISOString(),
+    });
+    setPrefLoading(false);
+    if (error || !updated) { setPrefError(error ?? 'Failed to save preferences'); return; }
+    setUser(updated as any);
+    setPrefSuccess(true);
+    setTimeout(() => setPrefSuccess(false), 3000);
   };
 
   const memberSince = user?.created_at
@@ -734,14 +816,12 @@ export default function UserProfile() {
                       Change Password
                     </p>
                     <p className="text-foreground/40 text-xs mt-0.5">
-                      For internal admin accounts only. Google OAuth users
-                      manage passwords via Google.
+                      Set a new password for your account.
                     </p>
                   </div>
                   <div className="divide-y divide-border/60">
                     {(
                       [
-                        { key: "cur", label: "Current Password" },
                         { key: "new", label: "New Password" },
                         { key: "con", label: "Confirm New Password" },
                       ] as { key: "cur" | "new" | "con"; label: string }[]
@@ -827,14 +907,130 @@ export default function UserProfile() {
                       ))}
                     </div>
 
+                    {/* Error / Success feedback */}
+                    {pwError && (
+                      <div className="mx-6 mb-1 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+                        {pwError}
+                      </div>
+                    )}
+                    {pwSuccess && (
+                      <div className="mx-6 mb-1 px-4 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">
+                        Password updated successfully!
+                      </div>
+                    )}
+
                     {/* Save button */}
                     <div className="px-6 pb-5">
-                      <button className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00aadd] text-black text-sm font-semibold transition-colors shadow-lg shadow-[#00C2FF]/20">
+                      <button
+                        onClick={handleChangePassword}
+                        disabled={pwLoading}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00aadd] disabled:opacity-60 disabled:cursor-not-allowed text-black text-sm font-semibold transition-colors shadow-lg shadow-[#00C2FF]/20"
+                      >
                         <Shield className="w-4 h-4" />
-                        Update Password
+                        {pwLoading ? 'Updating…' : 'Update Password'}
                       </button>
                     </div>
                   </div>
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === "preferences" && (
+              <motion.div
+                key="preferences"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.25 }}
+                className="space-y-4"
+              >
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold text-foreground">Preferences</h2>
+                  <p className="text-foreground/50 text-sm mt-1">Update your onboarding selections any time.</p>
+                </div>
+
+                {/* What do you want to create? */}
+                <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+                  <div className="px-6 py-4 border-b border-border">
+                    <p className="text-foreground text-sm font-semibold">What do you want to create?</p>
+                  </div>
+                  <div className="px-6 py-5 grid grid-cols-2 gap-3">
+                    {onboardingGoals.map((g) => (
+                      <button
+                        key={g}
+                        onClick={() => setPrefGoal(g)}
+                        className={`px-4 py-3 rounded-xl border text-sm font-medium text-left transition-all duration-150 ${
+                          prefGoal === g
+                            ? 'bg-[#00C2FF] border-[#00C2FF] text-black font-semibold'
+                            : 'border-border text-foreground/70 hover:bg-foreground/5 hover:border-foreground/20'
+                        }`}
+                      >
+                        {g}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* What is your role? */}
+                <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+                  <div className="px-6 py-4 border-b border-border">
+                    <p className="text-foreground text-sm font-semibold">What is your role?</p>
+                  </div>
+                  <div className="px-6 py-5 grid grid-cols-2 gap-3">
+                    {onboardingRoles.map((r) => (
+                      <button
+                        key={r}
+                        onClick={() => setPrefRole(r)}
+                        className={`px-4 py-3 rounded-xl border text-sm font-medium text-left transition-all duration-150 ${
+                          prefRole === r
+                            ? 'bg-[#00C2FF] border-[#00C2FF] text-black font-semibold'
+                            : 'border-border text-foreground/70 hover:bg-foreground/5 hover:border-foreground/20'
+                        }`}
+                      >
+                        {r}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Which best describes you? */}
+                <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+                  <div className="px-6 py-4 border-b border-border">
+                    <p className="text-foreground text-sm font-semibold">Which best describes you as a creator?</p>
+                  </div>
+                  <div className="px-6 py-5 flex flex-col gap-3">
+                    {onboardingPersonas.map((p, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setPrefPersona(i)}
+                        className={`w-full px-5 py-4 rounded-xl border text-left transition-all duration-150 ${
+                          prefPersona === i
+                            ? 'bg-[#00C2FF] border-[#00C2FF]'
+                            : 'border-border hover:bg-foreground/5 hover:border-foreground/20'
+                        }`}
+                      >
+                        <p className={`font-semibold text-sm leading-snug ${prefPersona === i ? 'text-black' : 'text-foreground'}`}>{p.title}</p>
+                        <p className={`text-xs mt-1 ${prefPersona === i ? 'text-black/70' : 'text-foreground/50'}`}>{p.sub}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {prefError && (
+                  <div className="px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">{prefError}</div>
+                )}
+                {prefSuccess && (
+                  <div className="px-4 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">Preferences saved!</div>
+                )}
+                <div className="pb-2">
+                  <button
+                    onClick={handleSavePreferences}
+                    disabled={prefLoading}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#00C2FF] hover:bg-[#00aadd] disabled:opacity-60 disabled:cursor-not-allowed text-black text-sm font-semibold transition-colors shadow-lg shadow-[#00C2FF]/20"
+                  >
+                    <Check className="w-4 h-4" />
+                    {prefLoading ? 'Saving…' : 'Save Preferences'}
+                  </button>
                 </div>
               </motion.div>
             )}
