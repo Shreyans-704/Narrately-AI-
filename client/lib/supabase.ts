@@ -163,31 +163,28 @@ export async function signIn(email: string, password: string) {
       .eq('id', data.user.id)
       .single();
 
-    // If profile is missing, try to create it (allowed by RLS policy when auth.uid() == id)
+    // If profile is missing, create it via the server endpoint (service_role, bypasses RLS)
+    // so the status is correctly set to 'inactive' (pending admin activation).
     if (!profileData || (profileError && (profileError as any).code === 'PGRST116')) {
-      const trialEndDate = getTrialEndDate();
-      const { data: createdProfile, error: insertError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
+      const meta = data.user.user_metadata as any;
+      const signupRes = await fetch(apiUrl('/api/signup'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: data.user.id,
           email,
-          full_name: (data.user.user_metadata as any)?.full_name || email.split('@')[0],
-          role: 'user',
-          status: 'active',  // Active by default
-          credit_balance: 30,
-          total_views: 0,
-          onboarding_completed: false,
-          trial_ends_at: trialEndDate.toISOString(),
-        })
-        .select()
-        .single();
-
+          fullName: meta?.full_name || meta?.name || email.split('@')[0],
+          avatarUrl: meta?.avatar_url || meta?.picture || null,
+        }),
+      });
+      const signupJson = await signupRes.json().catch(() => ({}));
+      const { data: createdProfile, error: insertError } = { data: signupJson.user ?? null, error: signupJson.error ?? null };
       if (insertError) {
         console.error('Failed to create profile on sign-in:', insertError);
-        throw insertError;
+        throw new Error(insertError);
       }
       profileData = createdProfile;
-      profileError = null; // Clear the error since we successfully created the profile
+      profileError = null;
     } else if (profileError) {
       // If there's a different error (not "no rows"), throw it
       throw profileError;
