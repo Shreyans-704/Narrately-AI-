@@ -318,8 +318,6 @@ const SidebarNav = ({
   const navItems = [
     { icon: <HomeIcon />, label: "Home", href: "/studio", active: true },
     { icon: <AvatarPersonIcon />, label: "Avatar", href: "/studio" },
-    { icon: <TranslateIcon />, label: "Translate", href: "/studio" },
-    { icon: <ToolsIcon />, label: "Tools", href: "/studio" },
     { icon: <ProjectsIcon />, label: "Projects", href: "/studio" },
   ];
   const workspaceName = `${(user.full_name || displayName).split(" ")[0]}'s Works\u2026`;
