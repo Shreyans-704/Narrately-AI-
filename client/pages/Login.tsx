@@ -52,7 +52,8 @@ export default function Login() {
           if ((currentUser as any).role === 'admin') {
             navigate('/admin-portal');
           } else {
-            navigate((currentUser as any).onboarding_completed === false ? '/onboarding' : '/studio');
+            // Let StudioDashboard handle routing (waiting page for inactive, onboarding redirect, etc.)
+            navigate('/studio');
           }
           return;
         }
@@ -70,7 +71,8 @@ export default function Login() {
           if ((currentUser as any).role === 'admin') {
             navigate('/admin-portal');
           } else {
-            navigate((currentUser as any).onboarding_completed === false ? '/onboarding' : '/studio');
+            // Let StudioDashboard handle routing (waiting page for inactive, onboarding redirect, etc.)
+            navigate('/studio');
           }
           return;
         }
@@ -86,7 +88,8 @@ export default function Login() {
       if ((profile as any).role === 'admin') {
         navigate('/admin-portal');
       } else {
-        navigate((profile as any).onboarding_completed === false ? '/onboarding' : '/studio');
+        // Let StudioDashboard handle routing (waiting page for inactive, onboarding redirect, etc.)
+        navigate('/studio');
       }
     } finally {
       setIsLoading(false);
@@ -127,7 +130,7 @@ export default function Login() {
       {/* ── Mobile-only top logo bar ── */}
       <div className="flex lg:hidden items-center gap-2 px-4 py-4 bg-background relative z-20">
         <img src="/ai-bg.svg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" />
-        <Link to="/" className="flex items-center gap-2 font-bold text-lg text-white relative z-10">
+        <Link to="/" className="flex items-center gap-2 font-bold text-lg text-foreground relative z-10">
           <img src="/narrately-logo.svg" alt="Narrately" className="w-7 h-7" />
           <span>Narrately</span>
         </Link>
@@ -147,19 +150,19 @@ export default function Login() {
         {/* Content */}
         <div className="login-panel-text relative z-10 flex flex-col justify-between h-full p-6 lg:p-10">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 font-bold text-xl !text-white hover:text-[#00C2FF] transition-colors">
+          <Link to="/" className="flex items-center gap-2 font-bold text-xl text-white hover:text-primary transition-colors">
             <img src="/narrately-logo.svg" alt="Narrately" className="w-8 h-8" />
-            <span className="!text-white">Narrately</span>
+            <span className="text-white">Narrately</span>
           </Link>
 
           {/* Bottom copy */}
           <div>
-            <h2 className="!text-white font-bold text-2xl lg:text-3xl leading-tight mb-6" style={{color:'#ffffff'}}>
+            <h2 className="text-white font-bold text-2xl lg:text-3xl leading-tight mb-6">
               Join Millions of Creators that Trust Narrately AI to Supercharge Their Stories
             </h2>
             <ul className="space-y-3">
               {features.map((f) => (
-                <li key={f} className="flex items-center gap-3 text-sm !text-white" style={{color:'#ffffff'}}>
+                <li key={f} className="flex items-center gap-3 text-sm text-white">
                   <CheckCircle2 className="w-5 h-5 text-blue-400 shrink-0" />
                   {f}
                 </li>
@@ -195,8 +198,16 @@ export default function Login() {
 
           {/* Error */}
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-red-400 text-sm">
-              {error}
+            <div className="mb-4 p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm">
+              <p className="font-medium">{error}</p>
+              {(error.toLowerCase().includes('not found') || error.toLowerCase().includes('no account')) && (
+                <Link 
+                  to="/signup" 
+                  className="mt-2 inline-block text-primary font-semibold hover:underline"
+                >
+                  Create an account →
+                </Link>
+              )}
             </div>
           )}
 

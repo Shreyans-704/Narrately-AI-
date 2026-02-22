@@ -7,9 +7,10 @@ export function ShortsVideoGrid() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {DEFAULT_SHORTS_VIDEOS.map((video, index) => (
             <div key={`${video.title}-${index}`} className="group relative">
-              <div className="relative w-full overflow-hidden rounded-2xl aspect-[9/16] bg-slate-900/60 border border-white/10 shadow-[0_20px_40px_rgba(15,23,42,0.35)] transition-transform duration-300 hover:scale-105">
+              <div className="relative w-full overflow-hidden rounded-2xl aspect-[9/16] bg-slate-900/60 border border-white/10 shadow-[0_20px_40px_rgba(15,23,42,0.35)] transition-transform duration-300 hover:scale-[1.03]">
                 <video
                   className="h-full w-full object-cover"
+                  style={{ imageRendering: 'crisp-edges', filter: 'none' }}
                   src={video.videoUrl}
                   autoPlay
                   loop

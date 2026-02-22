@@ -37,7 +37,7 @@ export const handleSignup: RequestHandler = async (req, res) => {
           full_name: fullName,
           avatar_url: avatarUrl ?? null,
           role: 'user',
-          status: 'inactive',   // admin must activate the user before they can access the app
+          status: 'inactive',   // New users start as inactive, awaiting admin activation
           credit_balance: 30,
           total_views: 0,
           onboarding_completed: false,
@@ -49,6 +49,13 @@ export const handleSignup: RequestHandler = async (req, res) => {
 
     if (error) {
       console.error('Profile creation error:', error);
+      
+      // Check for duplicate email error
+      if (error.message && (error.message.includes('duplicate key') || error.message.includes('profiles_email_key'))) {
+        res.status(409).json({ error: 'This email is already registered. Please sign in instead.' });
+        return;
+      }
+      
       res.status(400).json({ error: error.message });
       return;
     }

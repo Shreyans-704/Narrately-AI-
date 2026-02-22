@@ -47,6 +47,15 @@ export default function Signup() {
       const { user: createdUser, error: signupError } = await signUp(email, password, fullName);
 
       if (signupError) {
+        // Check for duplicate email error
+        if (signupError.toLowerCase().includes('duplicate key') || 
+            signupError.toLowerCase().includes('email already') ||
+            signupError.toLowerCase().includes('already registered') ||
+            signupError.toLowerCase().includes('user already registered')) {
+          setError('This email is already registered. Please sign in instead.');
+          return;
+        }
+        
         // Distinguish email confirmation info from real errors
         if (signupError.toLowerCase().includes('confirmation email') || signupError.toLowerCase().includes('check your inbox')) {
           setSuccessMessage(signupError);
@@ -57,9 +66,10 @@ export default function Signup() {
       }
 
       if (createdUser) {
-        // store user in auth store and navigate to onboarding
+        // Store user in auth store and navigate to studio
+        // Inactive users will automatically see the waiting page in StudioDashboard
         setUser(createdUser as any);
-        navigate('/onboarding');
+        navigate('/studio');
       }
     } finally {
       setIsLoading(false);
@@ -100,14 +110,14 @@ export default function Signup() {
       {/* ── Mobile-only top logo bar ── */}
       <div className="flex lg:hidden items-center gap-2 px-4 py-4 bg-background relative z-20">
         <img src="/ai-bg.svg" alt="" className="absolute inset-0 w-full h-full object-cover opacity-40 pointer-events-none" />
-        <Link to="/" className="flex items-center gap-2 font-bold text-lg text-white relative z-10">
+        <Link to="/" className="flex items-center gap-2 font-bold text-lg text-foreground relative z-10">
           <img src="/narrately-logo.svg" alt="Narrately" className="w-7 h-7" />
           <span>Narrately</span>
         </Link>
       </div>
 
       {/* ── Left: Marketing Sidebar ── */}
-      <div className="hidden lg:flex lg:w-1/2 relative flex-col">
+      <div className="hidden lg:flex lg:w-1/2 relative flex-col bg-gray-900">
         {/* Background image */}
         <img
           src="/Gemini_Generated_Image_qdv6alqdv6alqdv6.png"
@@ -168,8 +178,16 @@ export default function Signup() {
 
           {/* Error */}
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-red-400 text-sm">
-              {error}
+            <div className="mb-4 p-4 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive text-sm">
+              <p className="font-medium">{error}</p>
+              {error.toLowerCase().includes('already registered') && (
+                <Link 
+                  to="/login" 
+                  className="mt-2 inline-block text-primary font-semibold hover:underline"
+                >
+                  Go to Sign In →
+                </Link>
+              )}
             </div>
           )}
 

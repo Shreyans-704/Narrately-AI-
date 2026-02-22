@@ -33,13 +33,13 @@ function OctaPanel({ index, clipPath }: PanelProps) {
         style={{ clipPath }}
       >
         <div
-          className="relative h-full w-full overflow-hidden bg-slate-900/50 backdrop-blur-md"
+          className="relative h-full w-full overflow-hidden bg-slate-900/50"
           style={{ clipPath }}
         >
           <div className="absolute inset-0" style={{ transform: 'scale(1.08)' }}>
             <video
               className="h-full w-full object-cover"
-              style={{ objectPosition: videos[index].position }}
+              style={{ objectPosition: videos[index].position, filter: 'none', imageRendering: 'crisp-edges' }}
               src={videos[index].src}
               autoPlay
               loop
@@ -78,12 +78,13 @@ export function Hero3D() {
                   style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
                 >
                   <div
-                    className="relative h-full w-full overflow-hidden bg-slate-900/60 backdrop-blur-md"
+                    className="relative h-full w-full overflow-hidden bg-slate-900/60"
                     style={{ clipPath: 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)' }}
                   >
                     <div className="absolute inset-0" style={{ transform: 'scale(1.08)' }}>
                       <video
                         className="h-full w-full object-cover"
+                        style={{ filter: 'none', imageRendering: 'crisp-edges' }}
                         src="https://cdn.pixabay.com/video/2024/12/15/246869_large.mp4"
                         autoPlay
                         loop

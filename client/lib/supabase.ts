@@ -88,19 +88,11 @@ export async function signUp(email: string, password: string, fullName: string) 
     });
 
     if (authError) throw authError;
+    if (!authData.user) throw new Error('Sign up failed - no user returned');
 
-    // In Supabase v2, when email confirmation is required `authData.user` is returned
-    // but `authData.session` is null — the user cannot access the app until they confirm.
-    // We check both to handle all cases gracefully.
-    if (!authData.user || !authData.session) {
-      return {
-        user: null,
-        error:
-          'A confirmation email has been sent. Please check your inbox and verify your email before signing in.',
-      };
-    }
-
-    // Create profile via server endpoint (uses service_role to bypass RLS)
+    // IMPORTANT: Create profile immediately after auth user is created,
+    // even if email confirmation is pending. This ensures the user appears
+    // in the admin dashboard and can login after verifying their email.
     const response = await fetch('/api/signup', {
       method: 'POST',
       headers: {
@@ -122,13 +114,33 @@ export async function signUp(email: string, password: string, fullName: string) 
 
     if (profileError) throw new Error(profileError);
 
+    // Now check if email confirmation is required
+    // In Supabase v2, when email confirmation is required `authData.session` is null
+    if (!authData.session) {
+      return {
+        user: null,
+        error:
+          'A confirmation email has been sent. Please check your inbox and verify your email before signing in.',
+      };
+    }
+
+    // If we have a session (email confirmation disabled), return the profile
     return { user: profileData, error: null };
   } catch (error) {
     // Try to extract PostgREST / Supabase error message when possible
-    const message =
-      error && typeof error === 'object' && 'message' in (error as any)
-        ? (error as any).message
-        : 'Sign up failed';
+    let message = 'Sign up failed';
+    
+    if (error && typeof error === 'object' && 'message' in (error as any)) {
+      message = (error as any).message;
+      
+      // Check for duplicate email errors from Supabase Auth
+      if (message.toLowerCase().includes('user already registered') ||
+          message.toLowerCase().includes('email already') ||
+          message.toLowerCase().includes('already exists')) {
+        message = 'This email is already registered. Please sign in instead.';
+      }
+    }
+    
     return { user: null, error: message };
   }
 }
@@ -160,7 +172,7 @@ export async function signIn(email: string, password: string) {
           email,
           full_name: (data.user.user_metadata as any)?.full_name || email.split('@')[0],
           role: 'user',
-          status: 'inactive',
+          status: 'active',  // Active by default
           credit_balance: 30,
           total_views: 0,
           onboarding_completed: false,

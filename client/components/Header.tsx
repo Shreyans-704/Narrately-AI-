@@ -15,12 +15,12 @@ const navVariants = {
 function MobileThemeToggle() {
   const { theme, toggle } = useTheme();
   return (
-    <div className="flex items-center gap-2 py-2 border-b border-white/10 dark:border-white/10">
-      <span className="text-white/60 dark:text-white/50 text-xs uppercase tracking-wider font-medium flex-1">Theme</span>
+    <div className="flex items-center gap-2 py-2 border-b border-border">
+      <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex-1">Theme</span>
       <button
         onClick={toggle}
         aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-        className="p-1.5 rounded-full bg-white/10 border border-white/15 text-white/70 hover:text-white transition-colors"
+        className="p-1.5 rounded-full bg-muted border border-border text-foreground/70 hover:text-foreground transition-colors"
       >
         {theme === 'dark' ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
       </button>
@@ -35,7 +35,7 @@ function ThemeToggle() {
       onClick={toggle}
       aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
       title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-      className="hidden md:flex items-center justify-center w-8 h-8 rounded-full border border-white/20 dark:border-white/20 bg-white/10 dark:bg-white/5 text-white/70 dark:text-white/70 hover:text-white hover:bg-white/20 transition-all duration-200"
+      className="hidden md:flex items-center justify-center w-8 h-8 rounded-full border border-border bg-muted text-foreground/70 hover:text-foreground hover:bg-muted/80 transition-all duration-200"
     >
       {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
     </button>
@@ -68,14 +68,14 @@ export function Header() {
   };
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-black/60 backdrop-blur-md border-b border-white/10">
+    <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <nav className="container max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-2">
         {/* Logo */}
         <Link
           to="/"
-          className="flex items-center gap-2 font-bold text-xl text-white hover:text-[#00C2FF] transition-colors flex-shrink-0"
+          className="flex items-center gap-2 font-bold text-xl text-foreground hover:text-primary transition-colors flex-shrink-0"
         >
-          <div className="w-8 h-8 bg-gradient-to-br from-[#00C2FF] to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center flex-shrink-0">
             <span className="text-white font-black">N</span>
           </div>
           <span className="whitespace-nowrap">Narrately</span>
@@ -85,19 +85,19 @@ export function Header() {
         <div className="hidden md:flex items-center gap-8">
           <Link
             to="/features"
-            className="text-white/70 hover:text-white transition-colors text-sm"
+            className="text-foreground/70 hover:text-foreground transition-colors text-sm"
           >
             Features
           </Link>
           <Link
             to="/pricing"
-            className="text-white/70 hover:text-white transition-colors text-sm"
+            className="text-foreground/70 hover:text-foreground transition-colors text-sm"
           >
             Pricing
           </Link>
           <Link
             to="/about"
-            className="text-white/70 hover:text-white transition-colors text-sm"
+            className="text-foreground/70 hover:text-foreground transition-colors text-sm"
           >
             About
           </Link>
@@ -121,22 +121,22 @@ export function Header() {
               >
                 {/* Trial badge — desktop only */}
                 {onTrial && (
-                  <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-white/15 text-xs font-medium text-[#00C2FF]">
-                    <Flame className="w-3 h-3 text-[#00C2FF]" />
+                  <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted border border-border text-xs font-medium text-primary">
+                    <Flame className="w-3 h-3 text-primary" />
                     {trialDaysRemaining}d left
                   </div>
                 )}
 
                 {/* Credits badge — desktop only */}
-                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/70 border border-white/15 text-xs font-semibold text-white">
-                  <Zap className="w-3.5 h-3.5 text-[#4ade80]" />
+                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted border border-border text-xs font-semibold text-foreground">
+                  <Zap className="w-3.5 h-3.5 text-green-500" />
                   {user!.credit_balance} Credits
                 </div>
 
                 {/* Dashboard button — desktop only; hidden on pricing page */}
                 {!onPricingPage && (
                   <Link to="/studio" className="hidden sm:block">
-                    <button className="px-4 py-1.5 rounded-lg bg-[#1a1a1a] border border-white/25 text-white text-sm font-medium hover:bg-[#252525] transition-colors">
+                    <button className="px-4 py-1.5 rounded-lg bg-card border border-border text-foreground text-sm font-medium hover:bg-muted transition-colors">
                       Dashboard
                     </button>
                   </Link>
@@ -146,7 +146,7 @@ export function Header() {
                 {!onPricingPage && (
                   <button
                     onClick={handleSignOut}
-                    className="hidden sm:block px-4 py-1.5 rounded-lg text-white/80 text-sm font-medium hover:text-white transition-colors"
+                    className="hidden sm:block px-4 py-1.5 rounded-lg text-foreground/80 text-sm font-medium hover:text-foreground transition-colors"
                   >
                     Sign Out
                   </button>
@@ -156,7 +156,7 @@ export function Header() {
                 {onPricingPage && (
                   <Link
                     to="/studio/profile"
-                    className="hidden sm:flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#00C2FF] to-purple-500 text-white font-bold text-sm flex-shrink-0 hover:opacity-90 transition-opacity"
+                    className="hidden sm:flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent text-white font-bold text-sm flex-shrink-0 hover:opacity-90 transition-opacity"
                     title="View profile"
                   >
                     {(user?.full_name?.[0] || user?.email?.[0] || 'U').toUpperCase()}
@@ -175,7 +175,7 @@ export function Header() {
                 {/* Sign In — hidden on mobile (available in hamburger menu) */}
                 <Link
                   to="/login"
-                  className="hidden md:block px-4 py-1.5 rounded-lg text-white/80 text-sm font-medium hover:text-white transition-colors"
+                  className="hidden md:block px-4 py-1.5 rounded-lg text-foreground/80 text-sm font-medium hover:text-foreground transition-colors"
                 >
                   Sign In
                 </Link>
@@ -183,7 +183,7 @@ export function Header() {
                 {/* Get Started Free */}
                 <Link
                   to="/signup"
-                  className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-lg bg-[#00C2FF] text-black text-sm font-semibold hover:bg-[#00aadd] transition-colors whitespace-nowrap"
+                  className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors whitespace-nowrap"
                 >
                   <span className="hidden sm:inline">Get Started Free</span>
                   <span className="sm:hidden">Get Started</span>
@@ -194,7 +194,7 @@ export function Header() {
           </AnimatePresence>
         {/* Hamburger — mobile only */}
           <button
-            className="md:hidden text-white/70 hover:text-white transition-colors p-1"
+            className="md:hidden text-foreground/70 hover:text-foreground transition-colors p-1"
             onClick={() => setMobileOpen((o) => !o)}
             aria-label="Toggle menu"
           >
@@ -211,28 +211,28 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.18 }}
-            className="md:hidden bg-black/95 backdrop-blur-md border-b border-white/10 px-6 py-4 flex flex-col gap-3"
+            className="md:hidden bg-background/98 backdrop-blur-md border-b border-border px-6 py-4 flex flex-col gap-3"
           >
             {/* Mobile theme toggle */}
             <MobileThemeToggle />
-            <Link to="/features" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">Features</Link>
-            <Link to="/pricing" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">Pricing</Link>
-            <Link to="/about" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">About</Link>
+            <Link to="/features" onClick={() => setMobileOpen(false)} className="text-foreground/70 hover:text-foreground transition-colors text-sm py-2 border-b border-border">Features</Link>
+            <Link to="/pricing" onClick={() => setMobileOpen(false)} className="text-foreground/70 hover:text-foreground transition-colors text-sm py-2 border-b border-border">Pricing</Link>
+            <Link to="/about" onClick={() => setMobileOpen(false)} className="text-foreground/70 hover:text-foreground transition-colors text-sm py-2 border-b border-border">About</Link>
             {isLoggedIn ? (
               <>
                 {onPricingPage ? (
-                  <Link to="/studio/profile" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">My Profile</Link>
+                  <Link to="/studio/profile" onClick={() => setMobileOpen(false)} className="text-foreground/70 hover:text-foreground transition-colors text-sm py-2 border-b border-border">My Profile</Link>
                 ) : (
                   <>
-                    <Link to="/studio" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">Dashboard</Link>
-                    <button onClick={handleSignOut} className="text-left text-white/70 hover:text-white transition-colors text-sm py-2">Sign Out</button>
+                    <Link to="/studio" onClick={() => setMobileOpen(false)} className="text-foreground/70 hover:text-foreground transition-colors text-sm py-2 border-b border-border">Dashboard</Link>
+                    <button onClick={handleSignOut} className="text-left text-foreground/70 hover:text-foreground transition-colors text-sm py-2">Sign Out</button>
                   </>
                 )}
               </>
             ) : (
               <>
-                <Link to="/login" onClick={() => setMobileOpen(false)} className="text-white/70 hover:text-white transition-colors text-sm py-2 border-b border-white/10">Sign In</Link>
-                <Link to="/signup" onClick={() => setMobileOpen(false)} className="mt-1 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#00C2FF] text-black text-sm font-semibold hover:bg-[#00aadd] transition-colors w-fit">Get Started Free <ArrowRight className="w-3.5 h-3.5" /></Link>
+                <Link to="/login" onClick={() => setMobileOpen(false)} className="text-foreground/70 hover:text-foreground transition-colors text-sm py-2 border-b border-border">Sign In</Link>
+                <Link to="/signup" onClick={() => setMobileOpen(false)} className="mt-1 flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors w-fit">Get Started Free <ArrowRight className="w-3.5 h-3.5" /></Link>
               </>
             )}
           </motion.div>
