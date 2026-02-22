@@ -774,7 +774,7 @@ export default function AIAdminStudio() {
                               <button onClick={() => startEditCredits(u)} className="flex items-center gap-1.5 group/c" title="Click to edit">
                                 <span className="font-bold text-cyan-600 dark:text-cyan-300">{u.credit_balance}</span>
                                 <Zap className="w-3 h-3 text-yellow-400" />
-                                <Edit2 className="w-2.5 h-2.5 text-foreground/30 opacity-0 group-hover/c:opacity-100 transition-opacity" />
+                                <Edit2 className="w-2.5 h-2.5 text-foreground/50 hover:text-cyan-400 transition-colors cursor-pointer" />
                               </button>
                               )
                             )}

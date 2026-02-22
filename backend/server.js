@@ -188,7 +188,7 @@ app.get("/api/admin/users", async (_req, res) => {
           u.user_metadata?.full_name ||
           u.user_metadata?.name ||
           "-",
-        avatar_url: profile?.avatar_url || u.user_metadata?.avatar_url || null,
+        avatar_url: profile?.avatar_url || u.user_metadata?.avatar_url || u.user_metadata?.picture || null,
         avatar_group_id: avatarGroupMap.get(u.id) ?? null,
         status: statusMap.get(u.id) ?? "inactive",
         providers,
