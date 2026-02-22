@@ -4,8 +4,6 @@ import { motion } from "framer-motion";
 import {
   Home,
   User,
-  Languages,
-  Wrench,
   FolderOpen,
   ChevronRight,
   Settings,
@@ -37,8 +35,6 @@ import { useTheme } from "@/hooks/useTheme";
 const sidebarNavItems = [
   { icon: Home, label: "Home" },
   { icon: User, label: "Avatar" },
-  { icon: Languages, label: "Translate" },
-  { icon: Wrench, label: "Tools" },
   { icon: FolderOpen, label: "Projects" },
 ];
 
