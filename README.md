@@ -1,5 +1,7 @@
 # Narrately-AI-
 
+<p> website live :- https://narrately.online </p>
+
 <p> Narrately - AI Video Creation Studio A powerful, user-friendly platform built with cutting-edge AI technology to revolutionize how you create professional videos.</p>
 
 <img width="1861" height="871" alt="image" src="https://github.com/user-attachments/assets/b13841c0-9956-4c8e-a5c7-57c9b503aadc" />
