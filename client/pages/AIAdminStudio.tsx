@@ -10,6 +10,7 @@ import {
 import { useAdminStore } from '@/store/adminStore';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/hooks/useTheme';
+import { apiUrl } from '@/lib/api';
 
 interface AdminUser {
   id: string;
@@ -226,7 +227,7 @@ export default function AIAdminStudio() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/users');
+      const res = await fetch(apiUrl('/api/admin/users'));
       if (!res.ok) throw new Error((await res.json()).error || 'Failed to fetch users');
       const { users: data } = await res.json();
       setUsers(data);
@@ -246,7 +247,7 @@ export default function AIAdminStudio() {
   const handleSaveCredit = async (userId: string) => {
     setSaving(true);
     try {
-      const res = await fetch(`/api/admin/users/${userId}/credits`, {
+      const res = await fetch(apiUrl(`/api/admin/users/${userId}/credits`), {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ credit_balance: editingCredit }),
       });
@@ -260,7 +261,7 @@ export default function AIAdminStudio() {
   const handleSaveRole = async (userId: string) => {
     setSaving(true);
     try {
-      const res = await fetch(`/api/admin/users/${userId}/role`, {
+      const res = await fetch(apiUrl(`/api/admin/users/${userId}/role`), {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: editingRole }),
       });
@@ -273,7 +274,7 @@ export default function AIAdminStudio() {
 
   const handleAssignGroup = async (userId: string, groupId: string | null) => {
     try {
-      const res = await fetch(`/api/admin/users/${userId}/avatar-group`, {
+      const res = await fetch(apiUrl(`/api/admin/users/${userId}/avatar-group`), {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ avatar_group_id: groupId }),
       });
@@ -288,7 +289,7 @@ export default function AIAdminStudio() {
     const newStatus = u.status === 'active' ? 'inactive' : 'active';
     console.log('[handleToggleStatus] Starting...', { userId: u.id, currentStatus: u.status, newStatus });
     try {
-      const res = await fetch(`/api/admin/users/${u.id}/status`, {
+      const res = await fetch(apiUrl(`/api/admin/users/${u.id}/status`), {
         method: 'PATCH', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus }),
       });
@@ -312,7 +313,7 @@ export default function AIAdminStudio() {
     if (!confirm('Permanently delete this user? This action cannot be undone.')) return;
     setDeletingId(userId);
     try {
-      const res = await fetch(`/api/admin/users/${userId}`, { method: 'DELETE' });
+      const res = await fetch(apiUrl(`/api/admin/users/${userId}`), { method: 'DELETE' });
       if (!res.ok) throw new Error((await res.json()).error);
       setUsers((prev) => prev.filter((u) => u.id !== userId));
       showToast('User deleted');

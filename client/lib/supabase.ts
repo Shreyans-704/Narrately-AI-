@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { apiUrl } from '@/lib/api';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
@@ -93,7 +94,7 @@ export async function signUp(email: string, password: string, fullName: string) 
     // IMPORTANT: Create profile immediately after auth user is created,
     // even if email confirmation is pending. This ensures the user appears
     // in the admin dashboard and can login after verifying their email.
-    const response = await fetch('/api/signup', {
+    const response = await fetch(apiUrl('/api/signup'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -243,7 +244,7 @@ export async function getCurrentUser() {
     // client-side INSERTs for new rows, causing a blank/stuck dashboard screen.
     if (profileError && (profileError as any).code === 'PGRST116') {
       const meta = user.user_metadata as any;
-      const response = await fetch('/api/signup', {
+      const response = await fetch(apiUrl('/api/signup'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
