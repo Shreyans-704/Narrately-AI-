@@ -132,55 +132,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Technology Section */}
-      <section className="py-20 bg-card/30 border-t border-border">
-        <div className="container max-w-4xl mx-auto px-4 sm:px-6">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-            Built on Modern Technology
-          </h2>
-          <p className="text-lg text-foreground/85 mb-12">
-            Narrately is engineered with the latest web technologies to ensure speed, reliability, and scalability
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'Frontend',
-                items: ['React 18', 'TypeScript', 'Vite', 'TailwindCSS'],
-              },
-              {
-                title: 'Backend',
-                items: ['Node.js', 'Express', 'Modern APIs', 'Cloud Ready'],
-              },
-              {
-                title: 'AI Integration',
-                items: ['HeyGen API', 'AI Script Gen', 'Voice Synthesis', 'Avatar Tech'],
-              },
-            ].map((tech, i) => (
-              <div
-                key={i}
-                className="p-6 rounded-lg bg-background border border-border"
-              >
-                <h3 className="text-lg font-bold text-foreground mb-4">
-                  {tech.title}
-                </h3>
-                <ul className="space-y-2">
-                  {tech.items.map((item, j) => (
-                    <li
-                      key={j}
-                      className="text-foreground/85 flex items-center gap-2"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Design Philosophy */}
       <section className="py-20 border-t border-border">
         <div className="container max-w-4xl mx-auto px-4 sm:px-6">
