@@ -68,7 +68,7 @@ export default function Index() {
       <Header />
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16 sm:pt-20 sm:pb-0 sm:min-h-screen sm:flex sm:items-center relative overflow-hidden">
+      <section className="pt-24 pb-16 sm:pt-28 sm:pb-20 relative overflow-hidden">
         {/* AI background — same as login page */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <img src="/ai-bg.svg" alt="" className="w-full h-full object-cover opacity-70" />
