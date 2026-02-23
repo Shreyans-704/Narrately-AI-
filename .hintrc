@@ -1,0 +1,19 @@
+{
+  "extends": ["web-recommended"],
+  "hints": {
+    "axe/forms": "off",
+    "axe/aria": "off",
+    "axe/color": "off",
+    "axe/keyboard": "off",
+    "axe/language": "off",
+    "axe/name-role-value": "off",
+    "axe/parsing": "off",
+    "axe/sensory-and-visual-cues": "off",
+    "axe/structure": "off",
+    "axe/tables": "off",
+    "axe/text-alternatives": "off",
+    "axe/time-and-media": "off",
+    "no-inline-styles": "off",
+    "button-type": "off"
+  }
+}
