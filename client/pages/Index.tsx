@@ -68,7 +68,7 @@ export default function Index() {
       <Header />
 
       {/* Hero Section */}
-      <section className="pt-24 pb-16 sm:pt-28 sm:pb-20 relative overflow-hidden">
+      <section className="pt-[68px] pb-12 sm:pt-[72px] sm:pb-16 relative overflow-hidden">
         {/* AI background — same as login page */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <img src="/ai-bg.svg" alt="" className="w-full h-full object-cover opacity-70" />
@@ -91,7 +91,7 @@ export default function Index() {
             <div className="flex flex-col gap-5 sm:gap-8 animate-fade-in">
               {/* Main Headline */}
               <div className="flex flex-col gap-4">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight text-foreground overflow-hidden">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold leading-tight text-foreground">
                   <span className="inline-flex flex-wrap gap-x-2 gap-y-1">
                     {(displayText || fullText).split(' ').map((word, i) => {
                       const isNarrataly = word.includes('Narrately');
@@ -99,12 +99,12 @@ export default function Index() {
                       return (
                         <span
                           key={i}
-                          className={
+                          className={[
                             (isNarrataly || isAI)
                               ? 'bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent'
-                              : ''
-                          }
-                          style={{ opacity: displayText ? 1 : 0.4 }}
+                              : '',
+                            displayText ? 'opacity-100' : 'opacity-40',
+                          ].join(' ')}
                         >
                           {word}
                         </span>
