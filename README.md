@@ -17,7 +17,40 @@
 <img width="1893" height="874" alt="Screenshot 2026-02-22 153952" src="https://github.com/user-attachments/assets/f25e6f89-10c1-4f33-bd11-95de64d39fc8" />
 <img width="1900" height="868" alt="Screenshot 2026-02-20 223844" src="https://github.com/user-attachments/assets/187f380a-3c99-4832-ae37-72d3657f9ec1" />
 
+## 🏗️ System Architecture Overview
+<img width="1024" height="1536" alt="image" src="https://github.com/user-attachments/assets/d946a288-7ac8-496f-a0b0-885cc7466405" />
 
-
+## Component Explanation
+1. Frontend Layer
+User enters prompts, topics, or narrative requests.
+Modern responsive UI.
+Handles authentication, dashboard, and content viewing.
+2. API Layer
+Receives requests from frontend.
+Manages authentication.
+Routes AI generation requests.
+3. AI Generation Engine
+Core intelligence layer.
+Sends prompts to LLM APIs.
+Generates:
+Stories
+Blogs
+Narratives
+AI-assisted content
+4. Prompt Processing Layer
+Refines user input.
+Structures prompts.
+Adds context before AI inference.
+5. Database Layer
+Stores:
+User accounts
+Generated history
+Saved projects
+Preferences
+6. Output Layer
+Returns generated content to:
+Dashboard
+Editor
+Export modules
 
 
